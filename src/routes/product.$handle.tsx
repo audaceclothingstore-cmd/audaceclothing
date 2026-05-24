@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { PRODUCT_BY_HANDLE_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { PRODUCT_BY_HANDLE_QUERY, PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
 import { Navbar } from "@/components/Navbar";
+import { ProductCard } from "@/components/ProductCard";
 import { useCartStore } from "@/stores/cartStore";
-import { Loader2, ShieldCheck, Truck, Flame, CreditCard, PackageX, Star, BadgeCheck, Lock, Sparkles } from "lucide-react";
+import { Loader2, Truck, Flame, CreditCard, PackageX, BadgeCheck, Lock, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/product/$handle")({
   component: ProductPage,
@@ -185,25 +186,8 @@ function ProductPage() {
           </div>
         </div>
 
-        {/* REVIEWS */}
-        <section className="mt-20 border-t border-border pt-12">
-          <div className="flex items-end justify-between mb-8 flex-wrap gap-3">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-blood mb-2">// Reviews</p>
-              <h2 className="font-display text-4xl uppercase">From the wearers</h2>
-            </div>
-            <div className="flex items-center gap-1 font-mono text-[10px] uppercase text-muted-foreground">
-              {[0,1,2,3,4].map(i => <Star key={i} className="h-4 w-4 text-muted-foreground" />)}
-              <span className="ml-2">No reviews yet · be the first</span>
-            </div>
-          </div>
-          <div className="border border-dashed border-border p-10 text-center">
-            <p className="font-display text-2xl uppercase">No reviews yet.</p>
-            <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">
-              Drop 01 just went live. Real reviews from real buyers will appear here.
-            </p>
-          </div>
-        </section>
+        {/* MORE FROM THE DROP */}
+        <MoreFromDrop currentHandle={handle} />
       </div>
 
       {/* MOBILE STICKY BUY BAR */}
@@ -230,3 +214,40 @@ function ProductPage() {
   );
 }
 
+
+function MoreFromDrop({ currentHandle }: { currentHandle: string }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["products", "more"],
+    queryFn: async () => {
+      const res = await storefrontApiRequest(PRODUCTS_QUERY, { first: 8, query: null });
+      return (res?.data?.products?.edges ?? []) as ShopifyProduct[];
+    },
+  });
+  const others = (data ?? []).filter((p) => p.node.handle !== currentHandle).slice(0, 3);
+
+  return (
+    <section className="mt-20 border-t border-border pt-12">
+      <div className="flex items-end justify-between mb-8 flex-wrap gap-3 border-b border-border pb-4">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-blood mb-2">// More from</p>
+          <h2 className="font-display text-4xl uppercase">Drop 01</h2>
+        </div>
+        <Link to="/" hash="drop" className="font-mono text-[10px] uppercase tracking-widest hover:text-blood">See the full drop →</Link>
+      </div>
+      {isLoading ? (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {[0, 1, 2].map((i) => <div key={i} className="aspect-[4/5] bg-card border border-border animate-pulse" />)}
+        </div>
+      ) : others.length === 0 ? (
+        <div className="border border-dashed border-border p-10 text-center">
+          <p className="font-display text-2xl uppercase">More dropping soon.</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">Drop 02 in the works.</p>
+        </div>
+      ) : (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {others.map((p) => <ProductCard key={p.node.id} product={p} />)}
+        </div>
+      )}
+    </section>
+  );
+}
