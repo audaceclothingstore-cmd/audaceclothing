@@ -72,7 +72,7 @@ function Index() {
         <div className="flex items-end justify-between mb-10 border-b border-border pb-4">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-blood mb-2">// The drop</p>
-            <h2 className="font-display text-4xl md:text-5xl uppercase tracking-tight">Shop Drop 01</h2>
+            <h2 className="font-display text-4xl md:text-5xl uppercase tracking-tight">Drop 01</h2>
           </div>
           <p className="hidden md:block font-mono text-[10px] uppercase text-muted-foreground">Limited · No restocks</p>
         </div>
