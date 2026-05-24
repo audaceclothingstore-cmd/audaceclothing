@@ -214,3 +214,40 @@ function ProductPage() {
   );
 }
 
+
+function MoreFromDrop({ currentHandle }: { currentHandle: string }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["products", "more"],
+    queryFn: async () => {
+      const res = await storefrontApiRequest(PRODUCTS_QUERY, { first: 8, query: null });
+      return (res?.data?.products?.edges ?? []) as ShopifyProduct[];
+    },
+  });
+  const others = (data ?? []).filter((p) => p.node.handle !== currentHandle).slice(0, 3);
+
+  return (
+    <section className="mt-20 border-t border-border pt-12">
+      <div className="flex items-end justify-between mb-8 flex-wrap gap-3 border-b border-border pb-4">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-blood mb-2">// More from</p>
+          <h2 className="font-display text-4xl uppercase">Drop 01</h2>
+        </div>
+        <Link to="/" hash="drop" className="font-mono text-[10px] uppercase tracking-widest hover:text-blood">See the full drop →</Link>
+      </div>
+      {isLoading ? (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {[0, 1, 2].map((i) => <div key={i} className="aspect-[4/5] bg-card border border-border animate-pulse" />)}
+        </div>
+      ) : others.length === 0 ? (
+        <div className="border border-dashed border-border p-10 text-center">
+          <p className="font-display text-2xl uppercase">More dropping soon.</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">Drop 02 in the works.</p>
+        </div>
+      ) : (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {others.map((p) => <ProductCard key={p.node.id} product={p} />)}
+        </div>
+      )}
+    </section>
+  );
+}
