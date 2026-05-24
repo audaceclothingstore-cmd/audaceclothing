@@ -150,10 +150,16 @@ function ProductPage() {
               {isLoadingCart ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Add to cart · {cur}{price.toFixed(0)}</>}
             </button>
 
-            <div className="grid grid-cols-3 gap-3 pt-2 font-mono text-[10px] uppercase tracking-widest">
-              <div className="flex items-center gap-2 text-muted-foreground"><Truck className="h-4 w-4 text-blood" /> Free ship $80+</div>
-              <div className="flex items-center gap-2 text-muted-foreground"><ShieldCheck className="h-4 w-4 text-blood" /> 30-day returns</div>
-              <div className="flex items-center gap-2 text-muted-foreground"><Flame className="h-4 w-4 text-blood" /> No restocks</div>
+            <div className="grid grid-cols-3 gap-2 pt-1 font-mono text-[10px] uppercase tracking-widest">
+              <div className="flex items-center gap-2 text-muted-foreground"><Truck className="h-4 w-4 text-blood" /> 8–72 hr delivery</div>
+              <div className="flex items-center gap-2 text-muted-foreground"><CreditCard className="h-4 w-4 text-blood" /> Prepaid only</div>
+              <div className="flex items-center gap-2 text-muted-foreground"><PackageX className="h-4 w-4 text-blood" /> No returns</div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground border-y border-border py-3">
+              <span className="flex items-center gap-1.5"><Lock className="h-3 w-3 text-blood" /> Secure checkout</span>
+              <span className="flex items-center gap-1.5"><BadgeCheck className="h-3 w-3 text-blood" /> QC verified</span>
+              <span className="flex items-center gap-1.5"><Sparkles className="h-3 w-3 text-blood" /> Made in India</span>
             </div>
 
             <div className="border-t border-border pt-5 space-y-2 font-mono text-xs">
@@ -163,11 +169,66 @@ function ProductPage() {
                 <li>· Garment washed for that worn-in feel</li>
                 <li>· Drop shoulder, boxy oversized cut</li>
                 <li>· Plastisol back print, made to last</li>
+                <li>· Pre-shrunk · Pre-washed · Stitched to outlast trends</li>
+              </ul>
+            </div>
+
+            <div className="border-t border-border pt-5 space-y-2 font-mono text-xs">
+              <p className="text-blood uppercase tracking-widest text-[10px]">// Shipping & policy</p>
+              <ul className="text-muted-foreground space-y-1">
+                <li>· Dispatch within 24 hrs · delivery 8–72 hrs across India</li>
+                <li>· Prepaid orders only (UPI · Cards · Net banking · Wallets)</li>
+                <li>· No returns or exchanges — limited drop, every piece is numbered</li>
+                <li>· Size exchange only for manufacturing defects (report in 24 hrs)</li>
               </ul>
             </div>
           </div>
         </div>
+
+        {/* REVIEWS */}
+        <section className="mt-20 border-t border-border pt-12">
+          <div className="flex items-end justify-between mb-8 flex-wrap gap-3">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-blood mb-2">// Reviews</p>
+              <h2 className="font-display text-4xl uppercase">From the wearers</h2>
+            </div>
+            <div className="flex items-center gap-1 font-mono text-[10px] uppercase text-muted-foreground">
+              {[0,1,2,3,4].map(i => <Star key={i} className="h-4 w-4 text-muted-foreground" />)}
+              <span className="ml-2">No reviews yet · be the first</span>
+            </div>
+          </div>
+          <div className="border border-dashed border-border p-10 text-center">
+            <p className="font-display text-2xl uppercase">No reviews yet.</p>
+            <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">
+              Drop 01 just went live. Real reviews from real buyers will appear here.
+            </p>
+          </div>
+        </section>
       </div>
+
+      {/* MOBILE STICKY BUY BAR */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur px-4 py-3 flex items-center gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-baseline gap-2">
+            <span className="font-display text-xl text-blood leading-none">{cur}{price.toFixed(0)}</span>
+            {compare && compare > price && (
+              <span className="font-mono text-[11px] line-through text-muted-foreground">{cur}{compare.toFixed(0)}</span>
+            )}
+          </div>
+          <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">Prepaid · 8–72 hr delivery</p>
+        </div>
+        <button
+          onClick={handleAdd}
+          disabled={isLoadingCart || !selected.node.availableForSale}
+          className="h-12 px-5 bg-blood font-display text-lg uppercase tracking-wide text-foreground disabled:opacity-50 flex items-center gap-2"
+        >
+          {isLoadingCart ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add to cart"}
+        </button>
+      </div>
+      <div className="md:hidden h-20" />
+    </div>
+  );
+}
     </div>
   );
 }
