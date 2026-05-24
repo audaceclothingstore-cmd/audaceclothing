@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { PRODUCT_BY_HANDLE_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { PRODUCT_BY_HANDLE_QUERY, PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
 import { Navbar } from "@/components/Navbar";
+import { ProductCard } from "@/components/ProductCard";
 import { useCartStore } from "@/stores/cartStore";
-import { Loader2, ShieldCheck, Truck, Flame, CreditCard, PackageX, Star, BadgeCheck, Lock, Sparkles } from "lucide-react";
+import { Loader2, Truck, Flame, CreditCard, PackageX, BadgeCheck, Lock, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/product/$handle")({
   component: ProductPage,
