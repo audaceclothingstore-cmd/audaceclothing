@@ -23,7 +23,7 @@ function Index() {
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
 
-      <Ticker items={["Drop 01 — Loved Hard. Left Harder.", "Free shipping over $80", "Limited run · 200 pieces", "Wear the nerve"]} />
+      <Ticker items={["Drop 01 — Loved Hard. Left Harder.", "Delivery 8–72 hrs across India", "Prepaid only · No returns", "Limited run · 200 pieces", "Wear the nerve"]} />
 
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-border">
@@ -60,7 +60,7 @@ function Index() {
               <img src={heroTee} alt="Audace Loved Hard Left Harder tee" className="w-full h-full object-cover" />
               <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between font-mono text-[10px] uppercase tracking-widest text-ink">
                 <span>Drop 01 / 200</span>
-                <span>$49</span>
+                <span>₹1199</span>
               </div>
             </div>
           </div>
@@ -112,9 +112,9 @@ function Index() {
       {/* USP STRIP */}
       <section className="mx-auto max-w-7xl px-5 md:px-8 py-16 grid md:grid-cols-3 gap-px bg-border">
         {[
-          { k: "Free shipping", v: "Worldwide over $80" },
-          { k: "30-day returns", v: "No-questions-asked" },
-          { k: "Numbered run", v: "Drop 01 / 200 pieces" },
+          { k: "8–72 hr delivery", v: "Dispatched within 24 hrs · India-wide" },
+          { k: "Prepaid only", v: "UPI · Cards · Wallets · Net banking" },
+          { k: "Numbered run", v: "Drop 01 / 200 · No restocks · No returns" },
         ].map((c) => (
           <div key={c.k} className="bg-background p-8">
             <p className="font-display text-2xl uppercase">{c.k}</p>
