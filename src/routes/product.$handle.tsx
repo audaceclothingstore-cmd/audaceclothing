@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { PRODUCT_BY_HANDLE_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
 import { Navbar } from "@/components/Navbar";
 import { useCartStore } from "@/stores/cartStore";
-import { Loader2, ShieldCheck, Truck, Flame } from "lucide-react";
+import { Loader2, ShieldCheck, Truck, Flame, CreditCard, PackageX, Star, BadgeCheck, Lock, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/product/$handle")({
   component: ProductPage,
@@ -64,7 +64,7 @@ function ProductPage() {
   const img = p.images.edges[0]?.node;
   const price = parseFloat(selected.node.price.amount);
   const compare = selected.node.compareAtPrice ? parseFloat(selected.node.compareAtPrice.amount) : null;
-  const cur = selected.node.price.currencyCode === "USD" ? "$" : selected.node.price.currencyCode + " ";
+  const cur = "₹";
 
   const handleAdd = async () => {
     await addItem({
