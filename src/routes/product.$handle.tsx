@@ -1,0 +1,173 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { PRODUCT_BY_HANDLE_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { Navbar } from "@/components/Navbar";
+import { useCartStore } from "@/stores/cartStore";
+import { Loader2, ShieldCheck, Truck, Flame } from "lucide-react";
+
+export const Route = createFileRoute("/product/$handle")({
+  component: ProductPage,
+});
+
+function ProductPage() {
+  const { handle } = Route.useParams();
+  const { data, isLoading } = useQuery({
+    queryKey: ["product", handle],
+    queryFn: async () => {
+      const res = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
+      const node = res?.data?.product;
+      return node ? ({ node } as ShopifyProduct) : null;
+    },
+  });
+
+  const product = data;
+  const variants = product?.node.variants.edges ?? [];
+  const [variantId, setVariantId] = useState<string | null>(null);
+  const selected = useMemo(
+    () => variants.find((v) => v.node.id === variantId) ?? variants[0],
+    [variants, variantId]
+  );
+
+  const addItem = useCartStore((s) => s.addItem);
+  const isLoadingCart = useCartStore((s) => s.isLoading);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="mx-auto max-w-7xl px-5 md:px-8 py-20 grid md:grid-cols-2 gap-10">
+          <div className="aspect-square bg-card animate-pulse" />
+          <div className="space-y-4">
+            <div className="h-10 w-3/4 bg-card animate-pulse" />
+            <div className="h-6 w-1/3 bg-card animate-pulse" />
+            <div className="h-24 bg-card animate-pulse" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="mx-auto max-w-3xl px-5 py-32 text-center">
+          <p className="font-display text-5xl uppercase">Gone.</p>
+          <p className="font-mono text-xs uppercase text-muted-foreground mt-2">This drop is over.</p>
+          <Link to="/" className="inline-block mt-6 bg-blood px-6 py-3 font-display text-xl uppercase">Back home</Link>
+        </div>
+      </div>
+    );
+  }
+
+  const p = product.node;
+  const img = p.images.edges[0]?.node;
+  const price = parseFloat(selected.node.price.amount);
+  const compare = selected.node.compareAtPrice ? parseFloat(selected.node.compareAtPrice.amount) : null;
+  const cur = selected.node.price.currencyCode === "USD" ? "$" : selected.node.price.currencyCode + " ";
+
+  const handleAdd = async () => {
+    await addItem({
+      product,
+      variantId: selected.node.id,
+      variantTitle: selected.node.title,
+      price: selected.node.price,
+      quantity: 1,
+      selectedOptions: selected.node.selectedOptions,
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <Navbar />
+      <div className="mx-auto max-w-7xl px-5 md:px-8 py-10 md:py-16">
+        <Link to="/" className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-blood">← Back to drop</Link>
+
+        <div className="mt-6 grid md:grid-cols-2 gap-10">
+          <div className="space-y-3">
+            <div className="aspect-square bg-bone border border-border overflow-hidden">
+              {img && <img src={img.url} alt={img.altText ?? p.title} className="w-full h-full object-cover" />}
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {p.images.edges.slice(0, 4).map((im, i) => (
+                <div key={i} className="aspect-square bg-bone border border-border overflow-hidden">
+                  <img src={im.node.url} alt="" className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-7">
+            <div className="inline-flex items-center gap-2 border border-blood text-blood px-3 py-1 font-mono text-[10px] uppercase tracking-widest">
+              <Flame className="h-3 w-3" /> Limited · Drop 01 / 200
+            </div>
+            <h1 className="font-display text-5xl md:text-6xl uppercase leading-[0.9]">{p.title}</h1>
+
+            <div className="flex items-baseline gap-3">
+              <span className="font-display text-4xl text-blood">{cur}{price.toFixed(0)}</span>
+              {compare && compare > price && (
+                <>
+                  <span className="font-mono text-lg line-through text-muted-foreground">{cur}{compare.toFixed(0)}</span>
+                  <span className="font-mono text-[10px] uppercase tracking-widest bg-blood px-2 py-0.5">Save {Math.round(((compare - price) / compare) * 100)}%</span>
+                </>
+              )}
+            </div>
+
+            <p className="font-body text-base text-muted-foreground max-w-prose">{p.description}</p>
+
+            {/* Size selector */}
+            {p.options[0] && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="font-mono text-[10px] uppercase tracking-widest">Size · {selected.node.selectedOptions[0]?.value}</p>
+                  <a href="#sizing" className="font-mono text-[10px] uppercase underline text-muted-foreground">Size guide</a>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {variants.map((v) => {
+                    const isSel = v.node.id === selected.node.id;
+                    return (
+                      <button
+                        key={v.node.id}
+                        disabled={!v.node.availableForSale}
+                        onClick={() => setVariantId(v.node.id)}
+                        className={`py-3 font-display text-lg uppercase border transition-colors ${
+                          isSel ? "bg-foreground text-background border-foreground" : "border-border hover:border-blood"
+                        } ${!v.node.availableForSale ? "opacity-40 line-through cursor-not-allowed" : ""}`}
+                      >
+                        {v.node.title}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <button
+              onClick={handleAdd}
+              disabled={isLoadingCart || !selected.node.availableForSale}
+              className="w-full h-16 bg-blood hover:bg-blood/90 font-display text-2xl uppercase tracking-wide text-foreground disabled:opacity-50 flex items-center justify-center gap-3"
+            >
+              {isLoadingCart ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Add to cart · {cur}{price.toFixed(0)}</>}
+            </button>
+
+            <div className="grid grid-cols-3 gap-3 pt-2 font-mono text-[10px] uppercase tracking-widest">
+              <div className="flex items-center gap-2 text-muted-foreground"><Truck className="h-4 w-4 text-blood" /> Free ship $80+</div>
+              <div className="flex items-center gap-2 text-muted-foreground"><ShieldCheck className="h-4 w-4 text-blood" /> 30-day returns</div>
+              <div className="flex items-center gap-2 text-muted-foreground"><Flame className="h-4 w-4 text-blood" /> No restocks</div>
+            </div>
+
+            <div className="border-t border-border pt-5 space-y-2 font-mono text-xs">
+              <p className="text-blood uppercase tracking-widest text-[10px]">// Details</p>
+              <ul className="text-muted-foreground space-y-1">
+                <li>· 240gsm heavyweight combed cotton</li>
+                <li>· Garment washed for that worn-in feel</li>
+                <li>· Drop shoulder, boxy oversized cut</li>
+                <li>· Plastisol back print, made to last</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
