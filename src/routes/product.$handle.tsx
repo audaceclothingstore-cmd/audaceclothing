@@ -229,6 +229,4 @@ function ProductPage() {
     </div>
   );
 }
-    </div>
-  );
-}
+
