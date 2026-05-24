@@ -14,9 +14,9 @@ export function Navbar() {
           <img src={logo} alt="Audace" className="h-9 w-auto" />
         </Link>
         <nav className="hidden md:flex items-center gap-8 font-mono text-[11px] uppercase tracking-[0.18em]">
-          <Link to="/" className="hover:text-blood transition-colors">Drop 01</Link>
-          <a href="#manifesto" className="hover:text-blood transition-colors">Manifesto</a>
-          <a href="#sizing" className="hover:text-blood transition-colors">Sizing</a>
+          <Link to="/" hash="drop" className="hover:text-blood transition-colors">Drop 01</Link>
+          <Link to="/" hash="manifesto" className="hover:text-blood transition-colors">Manifesto</Link>
+          <Link to="/" hash="sizing" className="hover:text-blood transition-colors">Sizing</Link>
         </nav>
         <button
           onClick={openCart}
