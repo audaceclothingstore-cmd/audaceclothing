@@ -151,7 +151,7 @@ function ProductPage() {
             </button>
 
             <div className="grid grid-cols-3 gap-2 pt-1 font-mono text-[10px] uppercase tracking-widest">
-              <div className="flex items-center gap-2 text-muted-foreground"><Truck className="h-4 w-4 text-blood" /> 8–72 hr delivery</div>
+              <div className="flex items-center gap-2 text-muted-foreground"><Truck className="h-4 w-4 text-blood" /> 48–72 hr delivery</div>
               <div className="flex items-center gap-2 text-muted-foreground"><CreditCard className="h-4 w-4 text-blood" /> Prepaid only</div>
               <div className="flex items-center gap-2 text-muted-foreground"><PackageX className="h-4 w-4 text-blood" /> No returns</div>
             </div>
@@ -176,7 +176,7 @@ function ProductPage() {
             <div className="border-t border-border pt-5 space-y-2 font-mono text-xs">
               <p className="text-blood uppercase tracking-widest text-[10px]">// Shipping & policy</p>
               <ul className="text-muted-foreground space-y-1">
-                <li>· Dispatch within 24 hrs · delivery 8–72 hrs across India</li>
+                <li>· Dispatch within 24 hrs · delivery 48–72 hrs across India</li>
                 <li>· Prepaid orders only (UPI · Cards · Net banking · Wallets)</li>
                 <li>· No returns or exchanges — limited drop, every piece is numbered</li>
                 <li>· Size exchange only for manufacturing defects (report in 24 hrs)</li>
@@ -215,7 +215,7 @@ function ProductPage() {
               <span className="font-mono text-[11px] line-through text-muted-foreground">{cur}{compare.toFixed(0)}</span>
             )}
           </div>
-          <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">Prepaid · 8–72 hr delivery</p>
+          <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">Prepaid · 48–72 hr delivery</p>
         </div>
         <button
           onClick={handleAdd}

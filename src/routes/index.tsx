@@ -23,7 +23,7 @@ function Index() {
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
 
-      <Ticker items={["Drop 01 — Loved Hard. Left Harder.", "Delivery 8–72 hrs across India", "Prepaid only · No returns", "Limited run · 200 pieces", "Wear the nerve"]} />
+      <Ticker items={["Drop 01 — Loved Hard. Left Harder.", "Delivery 48–72 hrs across India", "Prepaid only · No returns", "Limited run · 200 pieces", "Wear the nerve"]} />
 
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-border">
@@ -112,7 +112,7 @@ function Index() {
       {/* USP STRIP */}
       <section className="mx-auto max-w-7xl px-5 md:px-8 py-16 grid md:grid-cols-3 gap-px bg-border">
         {[
-          { k: "8–72 hr delivery", v: "Dispatched within 24 hrs · India-wide" },
+          { k: "48–72 hr delivery", v: "Dispatched within 24 hrs · India-wide" },
           { k: "Prepaid only", v: "UPI · Cards · Wallets · Net banking" },
           { k: "Numbered run", v: "Drop 01 / 200 · No restocks · No returns" },
         ].map((c) => (

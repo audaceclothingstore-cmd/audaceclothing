@@ -89,7 +89,7 @@ export function CartDrawer() {
               <span className="font-mono text-xs uppercase text-muted-foreground">Subtotal</span>
               <span className="font-display text-2xl">{currency}{totalPrice.toFixed(0)}</span>
             </div>
-            <p className="font-mono text-[10px] uppercase text-muted-foreground">Prepaid only · Delivery in 8–72 hrs · No returns</p>
+            <p className="font-mono text-[10px] uppercase text-muted-foreground">Prepaid only · Delivery in 48–72 hrs · No returns</p>
             <Button
               onClick={checkout}
               disabled={isLoading || isSyncing}
