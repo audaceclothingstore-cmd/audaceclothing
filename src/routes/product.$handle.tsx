@@ -186,25 +186,8 @@ function ProductPage() {
           </div>
         </div>
 
-        {/* REVIEWS */}
-        <section className="mt-20 border-t border-border pt-12">
-          <div className="flex items-end justify-between mb-8 flex-wrap gap-3">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-blood mb-2">// Reviews</p>
-              <h2 className="font-display text-4xl uppercase">From the wearers</h2>
-            </div>
-            <div className="flex items-center gap-1 font-mono text-[10px] uppercase text-muted-foreground">
-              {[0,1,2,3,4].map(i => <Star key={i} className="h-4 w-4 text-muted-foreground" />)}
-              <span className="ml-2">No reviews yet · be the first</span>
-            </div>
-          </div>
-          <div className="border border-dashed border-border p-10 text-center">
-            <p className="font-display text-2xl uppercase">No reviews yet.</p>
-            <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">
-              Drop 01 just went live. Real reviews from real buyers will appear here.
-            </p>
-          </div>
-        </section>
+        {/* MORE FROM THE DROP */}
+        <MoreFromDrop currentHandle={handle} />
       </div>
 
       {/* MOBILE STICKY BUY BAR */}
