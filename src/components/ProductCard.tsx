@@ -8,7 +8,7 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
   const compare = p.variants.edges[0]?.node.compareAtPrice
     ? parseFloat(p.variants.edges[0].node.compareAtPrice!.amount)
     : null;
-  const cur = p.priceRange.minVariantPrice.currencyCode === "USD" ? "$" : p.priceRange.minVariantPrice.currencyCode + " ";
+  const cur = "₹";
 
   return (
     <Link
