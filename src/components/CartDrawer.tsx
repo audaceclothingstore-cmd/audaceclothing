@@ -9,7 +9,7 @@ export function CartDrawer() {
     useCartStore();
   const totalItems = items.reduce((s, i) => s + i.quantity, 0);
   const totalPrice = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
-  const currency = items[0]?.price.currencyCode ?? "USD";
+  const currency = "₹";
 
   useEffect(() => { if (isOpen) syncCart(); }, [isOpen, syncCart]);
 
@@ -75,7 +75,7 @@ export function CartDrawer() {
                     </div>
                   </div>
                   <div className="text-right font-mono text-sm">
-                    {currency === "USD" ? "$" : currency + " "}{(parseFloat(item.price.amount) * item.quantity).toFixed(0)}
+                    {currency}{(parseFloat(item.price.amount) * item.quantity).toFixed(0)}
                   </div>
                 </div>
               ))}
@@ -87,9 +87,9 @@ export function CartDrawer() {
           <div className="border-t border-border px-6 py-5 space-y-4 bg-card">
             <div className="flex justify-between items-baseline">
               <span className="font-mono text-xs uppercase text-muted-foreground">Subtotal</span>
-              <span className="font-display text-2xl">{currency === "USD" ? "$" : currency + " "}{totalPrice.toFixed(0)}</span>
+              <span className="font-display text-2xl">{currency}{totalPrice.toFixed(0)}</span>
             </div>
-            <p className="font-mono text-[10px] uppercase text-muted-foreground">Shipping & tax at checkout. Free worldwide over $80.</p>
+            <p className="font-mono text-[10px] uppercase text-muted-foreground">Prepaid only · Delivery in 8–72 hrs · No returns</p>
             <Button
               onClick={checkout}
               disabled={isLoading || isSyncing}
