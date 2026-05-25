@@ -1,11 +1,13 @@
 import { useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Loader2, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+import { ArrowRight, Loader2, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 
 export function CartDrawer() {
-  const { items, isOpen, setOpen, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } =
+  const navigate = useNavigate();
+  const { items, isOpen, setOpen, isLoading, isSyncing, updateQuantity, removeItem, syncCart } =
     useCartStore();
   const totalItems = items.reduce((s, i) => s + i.quantity, 0);
   const totalPrice = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
@@ -14,8 +16,8 @@ export function CartDrawer() {
   useEffect(() => { if (isOpen) syncCart(); }, [isOpen, syncCart]);
 
   const checkout = () => {
-    const url = getCheckoutUrl();
-    if (url) { window.open(url, "_blank"); setOpen(false); }
+    setOpen(false);
+    navigate({ to: "/checkout" });
   };
 
   return (
@@ -96,7 +98,7 @@ export function CartDrawer() {
               className="w-full h-14 rounded-none bg-blood text-foreground hover:bg-blood/90 font-display text-xl uppercase tracking-wide"
             >
               {isLoading || isSyncing ? <Loader2 className="w-5 h-5 animate-spin" /> : (
-                <>Checkout <ExternalLink className="w-4 h-4 ml-2" /></>
+                <>Checkout <ArrowRight className="w-4 h-4 ml-2" /></>
               )}
             </Button>
           </div>
