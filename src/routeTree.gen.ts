@@ -9,9 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
+import { Route as OrderSuccessRouteImport } from './routes/order.success'
+import { Route as OrderFailureRouteImport } from './routes/order.failure'
+import { Route as ApiPayuInitiateRouteImport } from './routes/api/payu/initiate'
+import { Route as ApiPayuCallbackRouteImport } from './routes/api/payu/callback'
 
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -22,35 +32,104 @@ const ProductHandleRoute = ProductHandleRouteImport.update({
   path: '/product/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrderSuccessRoute = OrderSuccessRouteImport.update({
+  id: '/order/success',
+  path: '/order/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderFailureRoute = OrderFailureRouteImport.update({
+  id: '/order/failure',
+  path: '/order/failure',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPayuInitiateRoute = ApiPayuInitiateRouteImport.update({
+  id: '/api/payu/initiate',
+  path: '/api/payu/initiate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPayuCallbackRoute = ApiPayuCallbackRouteImport.update({
+  id: '/api/payu/callback',
+  path: '/api/payu/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/checkout': typeof CheckoutRoute
+  '/order/failure': typeof OrderFailureRoute
+  '/order/success': typeof OrderSuccessRoute
   '/product/$handle': typeof ProductHandleRoute
+  '/api/payu/callback': typeof ApiPayuCallbackRoute
+  '/api/payu/initiate': typeof ApiPayuInitiateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/checkout': typeof CheckoutRoute
+  '/order/failure': typeof OrderFailureRoute
+  '/order/success': typeof OrderSuccessRoute
   '/product/$handle': typeof ProductHandleRoute
+  '/api/payu/callback': typeof ApiPayuCallbackRoute
+  '/api/payu/initiate': typeof ApiPayuInitiateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/checkout': typeof CheckoutRoute
+  '/order/failure': typeof OrderFailureRoute
+  '/order/success': typeof OrderSuccessRoute
   '/product/$handle': typeof ProductHandleRoute
+  '/api/payu/callback': typeof ApiPayuCallbackRoute
+  '/api/payu/initiate': typeof ApiPayuInitiateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/product/$handle'
+  fullPaths:
+    | '/'
+    | '/checkout'
+    | '/order/failure'
+    | '/order/success'
+    | '/product/$handle'
+    | '/api/payu/callback'
+    | '/api/payu/initiate'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/product/$handle'
-  id: '__root__' | '/' | '/product/$handle'
+  to:
+    | '/'
+    | '/checkout'
+    | '/order/failure'
+    | '/order/success'
+    | '/product/$handle'
+    | '/api/payu/callback'
+    | '/api/payu/initiate'
+  id:
+    | '__root__'
+    | '/'
+    | '/checkout'
+    | '/order/failure'
+    | '/order/success'
+    | '/product/$handle'
+    | '/api/payu/callback'
+    | '/api/payu/initiate'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CheckoutRoute: typeof CheckoutRoute
+  OrderFailureRoute: typeof OrderFailureRoute
+  OrderSuccessRoute: typeof OrderSuccessRoute
   ProductHandleRoute: typeof ProductHandleRoute
+  ApiPayuCallbackRoute: typeof ApiPayuCallbackRoute
+  ApiPayuInitiateRoute: typeof ApiPayuInitiateRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -65,12 +144,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/order/success': {
+      id: '/order/success'
+      path: '/order/success'
+      fullPath: '/order/success'
+      preLoaderRoute: typeof OrderSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order/failure': {
+      id: '/order/failure'
+      path: '/order/failure'
+      fullPath: '/order/failure'
+      preLoaderRoute: typeof OrderFailureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/payu/initiate': {
+      id: '/api/payu/initiate'
+      path: '/api/payu/initiate'
+      fullPath: '/api/payu/initiate'
+      preLoaderRoute: typeof ApiPayuInitiateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/payu/callback': {
+      id: '/api/payu/callback'
+      path: '/api/payu/callback'
+      fullPath: '/api/payu/callback'
+      preLoaderRoute: typeof ApiPayuCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CheckoutRoute: CheckoutRoute,
+  OrderFailureRoute: OrderFailureRoute,
+  OrderSuccessRoute: OrderSuccessRoute,
   ProductHandleRoute: ProductHandleRoute,
+  ApiPayuCallbackRoute: ApiPayuCallbackRoute,
+  ApiPayuInitiateRoute: ApiPayuInitiateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
