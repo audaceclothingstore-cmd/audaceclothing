@@ -144,6 +144,11 @@ function CheckoutPage() {
           razorpay_order_id: string;
           razorpay_signature: string;
         }) => {
+          console.log("[checkout] razorpay handler", {
+            order: response.razorpay_order_id,
+            payment: response.razorpay_payment_id,
+            hasSig: !!response.razorpay_signature,
+          });
           try {
             const v = await fetch("/api/razorpay/verify", {
               method: "POST",
@@ -151,17 +156,24 @@ function CheckoutPage() {
               credentials: "include",
               body: JSON.stringify(response),
             });
-            const result = await v.json();
-            if (!v.ok || !result.success) {
-              throw new Error(result.error || "Verification failed");
+            const result = await v.json().catch(() => ({}));
+            // Treat any verified/captured payment as success — never show
+            // PAYMENT FAILED to a customer whose money has been debited.
+            if (v.ok && (result.success || result.verified)) {
+              clearCart();
+              if (result.warning) toast.message(result.warning);
+              navigate({
+                to: "/order/success",
+                search: {
+                  order: result.order_name || "",
+                  txnid: result.order_id || response.razorpay_order_id,
+                },
+              });
+              return;
             }
-            clearCart();
-            navigate({
-              to: "/order/success",
-              search: { order: result.order_name, txnid: result.order_id },
-            });
+            throw new Error(result.error || "Verification failed");
           } catch (err) {
-            console.error(err);
+            console.error("[checkout] verify error", err);
             toast.error(err instanceof Error ? err.message : "Payment verification failed");
             navigate({
               to: "/order/failure",
