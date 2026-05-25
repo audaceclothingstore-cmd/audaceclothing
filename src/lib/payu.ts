@@ -1,10 +1,23 @@
-// PayU India config + hash helpers (server-only)
 import { createHash } from "crypto";
 
-export const PAYU_BASE_URL =
-  process.env.PAYU_MODE === "live"
-    ? "https://secure.payu.in/_payment"
-    : "https://test.payu.in/_payment";
+export const PAYU_BASE_URL = "https://test.payu.in/_payment";
+
+const EMPTY_PAYU_UDF_TAIL = ["", "", "", "", ""] as const;
+
+function sha512(value: string): string {
+  return createHash("sha512").update(value, "utf8").digest("hex");
+}
+
+export function cleanPayUValue(value: string | undefined | null): string {
+  return String(value ?? "").trim();
+}
+
+export function formatPayUAmount(amount: number): string {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error("Invalid PayU amount");
+  }
+  return amount.toFixed(2);
+}
 
 export interface PayURequestFields {
   key: string;
@@ -23,49 +36,47 @@ export interface PayURequestFields {
   udf5?: string;
 }
 
-// Request hash: sha512(key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5||||||SALT)
 export function generatePayURequestHash(fields: PayURequestFields, salt: string): string {
-  const str = [
-    fields.key,
-    fields.txnid,
-    fields.amount,
-    fields.productinfo,
-    fields.firstname,
-    fields.email,
-    fields.udf1 ?? "",
-    fields.udf2 ?? "",
-    fields.udf3 ?? "",
-    fields.udf4 ?? "",
-    fields.udf5 ?? "",
-    "", "", "", "", "",
-    salt,
+  const hashString = [
+    cleanPayUValue(fields.key),
+    cleanPayUValue(fields.txnid),
+    cleanPayUValue(fields.amount),
+    cleanPayUValue(fields.productinfo),
+    cleanPayUValue(fields.firstname),
+    cleanPayUValue(fields.email),
+    cleanPayUValue(fields.udf1),
+    cleanPayUValue(fields.udf2),
+    cleanPayUValue(fields.udf3),
+    cleanPayUValue(fields.udf4),
+    cleanPayUValue(fields.udf5),
+    ...EMPTY_PAYU_UDF_TAIL,
+    cleanPayUValue(salt),
   ].join("|");
-  return createHash("sha512").update(str).digest("hex");
+
+  return sha512(hashString);
 }
 
-// Response hash: sha512(SALT|status||||||udf5|udf4|udf3|udf2|udf1|email|firstname|productinfo|amount|txnid|key)
-// (when additionalCharges present, prepend it with a pipe — handled below)
 export function verifyPayUResponseHash(params: Record<string, string>, salt: string): boolean {
-  const additionalCharges = params.additionalCharges || "";
+  const additionalCharges = cleanPayUValue(params.additionalCharges);
   const base = [
-    salt,
-    params.status || "",
-    "", "", "", "", "",
-    params.udf5 || "",
-    params.udf4 || "",
-    params.udf3 || "",
-    params.udf2 || "",
-    params.udf1 || "",
-    params.email || "",
-    params.firstname || "",
-    params.productinfo || "",
-    params.amount || "",
-    params.txnid || "",
-    params.key || "",
+    cleanPayUValue(salt),
+    cleanPayUValue(params.status),
+    ...EMPTY_PAYU_UDF_TAIL,
+    cleanPayUValue(params.udf5),
+    cleanPayUValue(params.udf4),
+    cleanPayUValue(params.udf3),
+    cleanPayUValue(params.udf2),
+    cleanPayUValue(params.udf1),
+    cleanPayUValue(params.email),
+    cleanPayUValue(params.firstname),
+    cleanPayUValue(params.productinfo),
+    cleanPayUValue(params.amount),
+    cleanPayUValue(params.txnid),
+    cleanPayUValue(params.key),
   ].join("|");
   const str = additionalCharges ? `${additionalCharges}|${base}` : base;
-  const computed = createHash("sha512").update(str).digest("hex");
-  return computed.toLowerCase() === (params.hash || "").toLowerCase();
+  const computed = sha512(str);
+  return computed.toLowerCase() === cleanPayUValue(params.hash).toLowerCase();
 }
 
 export function generateTxnId(): string {
