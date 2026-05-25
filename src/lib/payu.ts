@@ -1,6 +1,6 @@
 import { createHash } from "crypto";
 
-export const PAYU_BASE_URL = "https://test.payu.in/_payment";
+export const PAYU_BASE_URL = "https://secure.payu.in/_payment";
 
 const EMPTY_PAYU_UDF_TAIL = ["", "", "", "", ""] as const;
 
