@@ -98,7 +98,7 @@ export function CartDrawer() {
               className="w-full h-14 rounded-none bg-blood text-foreground hover:bg-blood/90 font-display text-xl uppercase tracking-wide"
             >
               {isLoading || isSyncing ? <Loader2 className="w-5 h-5 animate-spin" /> : (
-                <>Checkout <ExternalLink className="w-4 h-4 ml-2" /></>
+                <>Checkout <ArrowRight className="w-4 h-4 ml-2" /></>
               )}
             </Button>
           </div>
