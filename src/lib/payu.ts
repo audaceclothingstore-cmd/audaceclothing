@@ -37,7 +37,7 @@ export function generatePayURequestHash(fields: PayURequestFields, salt: string)
     fields.udf3 ?? "",
     fields.udf4 ?? "",
     fields.udf5 ?? "",
-    "", "", "", "", "", "",
+    "", "", "", "", "",
     salt,
   ].join("|");
   return createHash("sha512").update(str).digest("hex");
