@@ -10,15 +10,25 @@ export interface RazorpayOrder {
   status: string;
 }
 
+function getCreds() {
+  const keyId = (process.env.RAZORPAY_KEY_ID || "").trim();
+  const keySecret = (process.env.RAZORPAY_KEY_SECRET || "").trim();
+  if (!keyId || !keySecret) {
+    throw new Error("Razorpay not configured (missing RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET)");
+  }
+  if (keyId.startsWith("rzp_test_")) {
+    throw new Error("Razorpay TEST key detected. Set LIVE rzp_live_ credentials.");
+  }
+  return { keyId, keySecret };
+}
+
 export async function createRazorpayOrder(args: {
   amount: number; // in paise
   currency: string;
   receipt: string;
   notes?: Record<string, string>;
 }): Promise<RazorpayOrder> {
-  const keyId = process.env.RAZORPAY_KEY_ID;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
-  if (!keyId || !keySecret) throw new Error("Razorpay not configured");
+  const { keyId, keySecret } = getCreds();
   if (!Number.isFinite(args.amount) || args.amount < 100) {
     throw new Error("Amount must be >= 100 paise");
   }
@@ -35,6 +45,7 @@ export async function createRazorpayOrder(args: {
       currency: args.currency,
       receipt: args.receipt,
       notes: args.notes,
+      // Auto-capture payment immediately on success (LIVE mode)
       payment_capture: 1,
     }),
   });
@@ -42,7 +53,12 @@ export async function createRazorpayOrder(args: {
   if (!res.ok) {
     throw new Error(`Razorpay order error ${res.status}: ${json?.error?.description || JSON.stringify(json)}`);
   }
+  console.log("[razorpay] order created", { id: json.id, mode: keyId.slice(0, 8), amount: json.amount });
   return json;
+}
+
+export function getPublicKeyId(): string {
+  return getCreds().keyId;
 }
 
 export function verifyRazorpaySignature(args: {
@@ -50,17 +66,53 @@ export function verifyRazorpaySignature(args: {
   paymentId: string;
   signature: string;
 }): boolean {
-  const secret = process.env.RAZORPAY_KEY_SECRET;
-  if (!secret) return false;
-  const expected = createHmac("sha256", secret)
-    .update(`${args.orderId}|${args.paymentId}`)
-    .digest("hex");
-  const a = Buffer.from(expected, "hex");
-  const b = Buffer.from(String(args.signature || ""), "hex");
-  if (a.length !== b.length || a.length === 0) return false;
+  let secret: string;
   try {
-    return timingSafeEqual(a, b);
-  } catch {
+    secret = getCreds().keySecret;
+  } catch (e) {
+    console.error("[razorpay] verify: missing creds", e);
+    return false;
+  }
+
+  const sig = String(args.signature || "").trim().toLowerCase();
+  if (!args.orderId || !args.paymentId || !sig) {
+    console.error("[razorpay] verify: missing fields", {
+      hasOrder: !!args.orderId,
+      hasPayment: !!args.paymentId,
+      hasSig: !!sig,
+    });
+    return false;
+  }
+
+  const payload = `${args.orderId}|${args.paymentId}`;
+  const expected = createHmac("sha256", secret).update(payload).digest("hex");
+
+  if (expected.length !== sig.length) {
+    console.error("[razorpay] verify: length mismatch", {
+      expectedLen: expected.length,
+      gotLen: sig.length,
+      orderId: args.orderId,
+      paymentId: args.paymentId,
+    });
+    return false;
+  }
+
+  try {
+    const a = Buffer.from(expected, "hex");
+    const b = Buffer.from(sig, "hex");
+    if (a.length === 0 || a.length !== b.length) return false;
+    const ok = timingSafeEqual(a, b);
+    if (!ok) {
+      console.error("[razorpay] verify: signature mismatch", {
+        orderId: args.orderId,
+        paymentId: args.paymentId,
+        expectedPrefix: expected.slice(0, 8),
+        gotPrefix: sig.slice(0, 8),
+      });
+    }
+    return ok;
+  } catch (e) {
+    console.error("[razorpay] verify: compare threw", e);
     return false;
   }
 }
