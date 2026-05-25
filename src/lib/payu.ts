@@ -37,7 +37,7 @@ export function generatePayURequestHash(fields: PayURequestFields, salt: string)
     fields.udf3 ?? "",
     fields.udf4 ?? "",
     fields.udf5 ?? "",
-    "", "", "", "", "", "",
+    "", "", "", "", "",
     salt,
   ].join("|");
   return createHash("sha512").update(str).digest("hex");
@@ -50,7 +50,7 @@ export function verifyPayUResponseHash(params: Record<string, string>, salt: str
   const base = [
     salt,
     params.status || "",
-    "", "", "", "", "", "",
+    "", "", "", "", "",
     params.udf5 || "",
     params.udf4 || "",
     params.udf3 || "",
