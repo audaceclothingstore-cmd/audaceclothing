@@ -11,16 +11,44 @@ export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
       { title: "Checkout — AUDACE" },
-      { name: "description", content: "Secure checkout powered by PayU." },
+      { name: "description", content: "Secure checkout powered by Razorpay." },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
   component: CheckoutPage,
 });
 
+const RAZORPAY_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
+
+declare global {
+  interface Window {
+    Razorpay?: new (opts: Record<string, unknown>) => { open: () => void; on: (e: string, cb: (p: unknown) => void) => void };
+  }
+}
+
+function loadRazorpay(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") return resolve(false);
+    if (window.Razorpay) return resolve(true);
+    const existing = document.querySelector<HTMLScriptElement>(`script[src="${RAZORPAY_SCRIPT}"]`);
+    if (existing) {
+      existing.addEventListener("load", () => resolve(true), { once: true });
+      existing.addEventListener("error", () => resolve(false), { once: true });
+      return;
+    }
+    const s = document.createElement("script");
+    s.src = RAZORPAY_SCRIPT;
+    s.async = true;
+    s.onload = () => resolve(true);
+    s.onerror = () => resolve(false);
+    document.body.appendChild(s);
+  });
+}
+
 function CheckoutPage() {
   const navigate = useNavigate();
   const items = useCartStore((s) => s.items);
+  const clearCart = useCartStore((s) => s.clearCart);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     firstName: "",
@@ -38,6 +66,10 @@ function CheckoutPage() {
   useEffect(() => {
     if (items.length === 0) navigate({ to: "/" });
   }, [items.length, navigate]);
+
+  useEffect(() => {
+    void loadRazorpay();
+  }, []);
 
   const total = items.reduce(
     (s, i) => s + parseFloat(i.price.amount) * i.quantity,
@@ -65,21 +97,91 @@ function CheckoutPage() {
     };
 
     try {
-      const res = await fetch("/api/payu/initiate", {
+      const ready = await loadRazorpay();
+      if (!ready || !window.Razorpay) {
+        throw new Error("Could not load payment gateway");
+      }
+
+      const res = await fetch("/api/razorpay/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
         credentials: "include",
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const html = await res.text();
-      // Replace document with the auto-submit form -> goes to PayU
-      document.open();
-      document.write(html);
-      document.close();
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || `HTTP ${res.status}`);
+      }
+      const order = (await res.json()) as {
+        order_id: string;
+        amount: number;
+        currency: string;
+        key_id: string;
+      };
+
+      const rzp = new window.Razorpay({
+        key: order.key_id,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.order_id,
+        name: "AUDACE",
+        description: "Order payment",
+        prefill: {
+          name: `${form.firstName} ${form.lastName}`.trim(),
+          email: form.email,
+          contact: form.phone,
+        },
+        notes: { address: form.address1 },
+        theme: { color: "#dc2626" },
+        modal: {
+          ondismiss: () => {
+            setSubmitting(false);
+            toast.message("Payment cancelled");
+          },
+        },
+        handler: async (response: {
+          razorpay_payment_id: string;
+          razorpay_order_id: string;
+          razorpay_signature: string;
+        }) => {
+          try {
+            const v = await fetch("/api/razorpay/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify(response),
+            });
+            const result = await v.json();
+            if (!v.ok || !result.success) {
+              throw new Error(result.error || "Verification failed");
+            }
+            clearCart();
+            navigate({
+              to: "/order/success",
+              search: { order: result.order_name, txnid: result.order_id },
+            });
+          } catch (err) {
+            console.error(err);
+            toast.error(err instanceof Error ? err.message : "Payment verification failed");
+            navigate({
+              to: "/order/failure",
+              search: { reason: "verification_failed", txnid: response.razorpay_order_id },
+            });
+          }
+        },
+      });
+
+      rzp.on("payment.failed", (resp: unknown) => {
+        console.error("Razorpay payment.failed", resp);
+        const r = resp as { error?: { description?: string } };
+        toast.error(r?.error?.description || "Payment failed");
+        setSubmitting(false);
+      });
+
+      rzp.open();
     } catch (err) {
       console.error(err);
-      toast.error("Could not start payment. Please try again.");
+      toast.error(err instanceof Error ? err.message : "Could not start payment");
       setSubmitting(false);
     }
   };
@@ -91,7 +193,7 @@ function CheckoutPage() {
           Checkout
         </h1>
         <p className="font-mono text-xs uppercase text-muted-foreground mb-8">
-          Prepaid · Secure payment via PayU
+          Prepaid · Secure payment via Razorpay
         </p>
 
         <div className="grid md:grid-cols-[1fr_320px] gap-8">

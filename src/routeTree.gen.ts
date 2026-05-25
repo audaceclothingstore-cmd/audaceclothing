@@ -14,6 +14,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 import { Route as OrderSuccessRouteImport } from './routes/order.success'
 import { Route as OrderFailureRouteImport } from './routes/order.failure'
+import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/verify'
+import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
 import { Route as ApiPayuInitiateRouteImport } from './routes/api/payu/initiate'
 import { Route as ApiPayuCallbackRouteImport } from './routes/api/payu/callback'
 
@@ -42,6 +44,16 @@ const OrderFailureRoute = OrderFailureRouteImport.update({
   path: '/order/failure',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRazorpayVerifyRoute = ApiRazorpayVerifyRouteImport.update({
+  id: '/api/razorpay/verify',
+  path: '/api/razorpay/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRazorpayCreateOrderRoute = ApiRazorpayCreateOrderRouteImport.update({
+  id: '/api/razorpay/create-order',
+  path: '/api/razorpay/create-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPayuInitiateRoute = ApiPayuInitiateRouteImport.update({
   id: '/api/payu/initiate',
   path: '/api/payu/initiate',
@@ -61,6 +73,8 @@ export interface FileRoutesByFullPath {
   '/product/$handle': typeof ProductHandleRoute
   '/api/payu/callback': typeof ApiPayuCallbackRoute
   '/api/payu/initiate': typeof ApiPayuInitiateRoute
+  '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
+  '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +84,8 @@ export interface FileRoutesByTo {
   '/product/$handle': typeof ProductHandleRoute
   '/api/payu/callback': typeof ApiPayuCallbackRoute
   '/api/payu/initiate': typeof ApiPayuInitiateRoute
+  '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
+  '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +96,8 @@ export interface FileRoutesById {
   '/product/$handle': typeof ProductHandleRoute
   '/api/payu/callback': typeof ApiPayuCallbackRoute
   '/api/payu/initiate': typeof ApiPayuInitiateRoute
+  '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
+  '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +109,8 @@ export interface FileRouteTypes {
     | '/product/$handle'
     | '/api/payu/callback'
     | '/api/payu/initiate'
+    | '/api/razorpay/create-order'
+    | '/api/razorpay/verify'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +120,8 @@ export interface FileRouteTypes {
     | '/product/$handle'
     | '/api/payu/callback'
     | '/api/payu/initiate'
+    | '/api/razorpay/create-order'
+    | '/api/razorpay/verify'
   id:
     | '__root__'
     | '/'
@@ -109,6 +131,8 @@ export interface FileRouteTypes {
     | '/product/$handle'
     | '/api/payu/callback'
     | '/api/payu/initiate'
+    | '/api/razorpay/create-order'
+    | '/api/razorpay/verify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,6 +143,8 @@ export interface RootRouteChildren {
   ProductHandleRoute: typeof ProductHandleRoute
   ApiPayuCallbackRoute: typeof ApiPayuCallbackRoute
   ApiPayuInitiateRoute: typeof ApiPayuInitiateRoute
+  ApiRazorpayCreateOrderRoute: typeof ApiRazorpayCreateOrderRoute
+  ApiRazorpayVerifyRoute: typeof ApiRazorpayVerifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -158,6 +184,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrderFailureRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/razorpay/verify': {
+      id: '/api/razorpay/verify'
+      path: '/api/razorpay/verify'
+      fullPath: '/api/razorpay/verify'
+      preLoaderRoute: typeof ApiRazorpayVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/razorpay/create-order': {
+      id: '/api/razorpay/create-order'
+      path: '/api/razorpay/create-order'
+      fullPath: '/api/razorpay/create-order'
+      preLoaderRoute: typeof ApiRazorpayCreateOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/payu/initiate': {
       id: '/api/payu/initiate'
       path: '/api/payu/initiate'
@@ -183,17 +223,9 @@ const rootRouteChildren: RootRouteChildren = {
   ProductHandleRoute: ProductHandleRoute,
   ApiPayuCallbackRoute: ApiPayuCallbackRoute,
   ApiPayuInitiateRoute: ApiPayuInitiateRoute,
+  ApiRazorpayCreateOrderRoute: ApiRazorpayCreateOrderRoute,
+  ApiRazorpayVerifyRoute: ApiRazorpayVerifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
