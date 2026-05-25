@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { setCookie } from "@tanstack/react-start/server";
 import {
   PAYU_BASE_URL,
-  generatePayURequestHash,
+  buildPayUFormFields,
+  cleanPayUValue,
+  formatPayUAmount,
   generateTxnId,
   type PayURequestFields,
 } from "@/lib/payu";
@@ -18,8 +20,8 @@ export const Route = createFileRoute("/api/payu/initiate")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const key = process.env.PAYU_MERCHANT_KEY;
-        const salt = process.env.PAYU_SALT;
+        const key = cleanPayUValue(process.env.PAYU_MERCHANT_KEY);
+        const salt = cleanPayUValue(process.env.PAYU_SALT);
         if (!key || !salt) {
           return new Response("PayU not configured", { status: 500 });
         }
@@ -34,11 +36,11 @@ export const Route = createFileRoute("/api/payu/initiate")({
           return new Response("Missing items or customer", { status: 400 });
         }
 
-        const amount = body.items
-          .reduce((s, i) => s + parseFloat(i.price) * i.quantity, 0)
-          .toFixed(2);
+        const amount = formatPayUAmount(
+          body.items.reduce((s, i) => s + Number(i.price) * i.quantity, 0)
+        );
         const productinfo =
-          body.items.map((i) => `${i.title} x${i.quantity}`).join(", ").slice(0, 100);
+          body.items.map((i) => cleanPayUValue(`${i.title} x${i.quantity}`)).join(", ").slice(0, 100);
         const txnid = generateTxnId();
 
         const origin = new URL(request.url).origin;
@@ -50,13 +52,18 @@ export const Route = createFileRoute("/api/payu/initiate")({
           txnid,
           amount,
           productinfo,
-          firstname: body.customer.firstName,
+          firstname: body.customer.firstName || "Customer",
           email: body.customer.email,
           phone: body.customer.phone,
           surl,
           furl,
+          udf1: "",
+          udf2: "",
+          udf3: "",
+          udf4: "",
+          udf5: "",
         };
-        const hash = generatePayURequestHash(fields, salt);
+        const payuFields = buildPayUFormFields(fields, salt);
 
         // Persist pending order in an httpOnly cookie keyed by txnid (10 min)
         setCookie(`payu_pending_${txnid}`, JSON.stringify(body), {
@@ -68,17 +75,21 @@ export const Route = createFileRoute("/api/payu/initiate")({
         });
 
         const formInputs: Array<[string, string]> = [
-          ["key", fields.key],
-          ["txnid", fields.txnid],
-          ["amount", fields.amount],
-          ["productinfo", fields.productinfo],
-          ["firstname", fields.firstname],
-          ["email", fields.email],
-          ["phone", fields.phone],
-          ["surl", fields.surl],
-          ["furl", fields.furl],
-          ["hash", hash],
-          ["service_provider", "payu_paisa"],
+          ["key", payuFields.key],
+          ["txnid", payuFields.txnid],
+          ["amount", payuFields.amount],
+          ["productinfo", payuFields.productinfo],
+          ["firstname", payuFields.firstname],
+          ["email", payuFields.email],
+          ["phone", payuFields.phone],
+          ["surl", payuFields.surl],
+          ["furl", payuFields.furl],
+          ["udf1", payuFields.udf1 || ""],
+          ["udf2", payuFields.udf2 || ""],
+          ["udf3", payuFields.udf3 || ""],
+          ["udf4", payuFields.udf4 || ""],
+          ["udf5", payuFields.udf5 || ""],
+          ["hash", payuFields.hash],
         ];
 
         const html = `<!doctype html><html><head><meta charset="utf-8"><title>Redirecting to PayU…</title>
