@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getCookie, deleteCookie } from "@tanstack/react-start/server";
-import { verifyPayUResponseHash } from "@/lib/payu";
+import { cleanPayUValue, verifyPayUResponseHash } from "@/lib/payu";
 import { createShopifyOrder, type PendingOrder } from "@/lib/shopify-admin";
 
 export const Route = createFileRoute("/api/payu/callback")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const salt = process.env.PAYU_SALT;
+        const salt = cleanPayUValue(process.env.PAYU_SALT);
         if (!salt) return new Response("PayU not configured", { status: 500 });
 
         const form = await request.formData();
