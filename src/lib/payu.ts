@@ -36,6 +36,34 @@ export interface PayURequestFields {
   udf5?: string;
 }
 
+export type PayUFormFields = PayURequestFields & {
+  hash: string;
+};
+
+export function buildPayUFormFields(fields: PayURequestFields, salt: string): PayUFormFields {
+  const cleaned: PayURequestFields = {
+    key: cleanPayUValue(fields.key),
+    txnid: cleanPayUValue(fields.txnid),
+    amount: cleanPayUValue(fields.amount),
+    productinfo: cleanPayUValue(fields.productinfo),
+    firstname: cleanPayUValue(fields.firstname),
+    email: cleanPayUValue(fields.email),
+    phone: cleanPayUValue(fields.phone),
+    surl: cleanPayUValue(fields.surl),
+    furl: cleanPayUValue(fields.furl),
+    udf1: cleanPayUValue(fields.udf1),
+    udf2: cleanPayUValue(fields.udf2),
+    udf3: cleanPayUValue(fields.udf3),
+    udf4: cleanPayUValue(fields.udf4),
+    udf5: cleanPayUValue(fields.udf5),
+  };
+
+  return {
+    ...cleaned,
+    hash: generatePayURequestHash(cleaned, salt),
+  };
+}
+
 export function generatePayURequestHash(fields: PayURequestFields, salt: string): string {
   const hashString = [
     cleanPayUValue(fields.key),
