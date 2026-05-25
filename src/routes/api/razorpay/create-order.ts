@@ -1,16 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { setCookie } from "@tanstack/react-start/server";
-import { createRazorpayOrder, generateReceipt } from "@/lib/razorpay";
+import { createRazorpayOrder, generateReceipt, getPublicKeyId } from "@/lib/razorpay";
 import type { PendingOrder } from "@/lib/shopify-admin";
 
 export const Route = createFileRoute("/api/razorpay/create-order")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const keyId = process.env.RAZORPAY_KEY_ID;
-        if (!keyId || !process.env.RAZORPAY_KEY_SECRET) {
-          return new Response("Razorpay not configured", { status: 500 });
+        let keyId: string;
+        try {
+          keyId = getPublicKeyId();
+        } catch (e) {
+          console.error("[razorpay] create-order config error", e);
+          return Response.json(
+            { error: e instanceof Error ? e.message : "Razorpay not configured" },
+            { status: 500 }
+          );
         }
+
 
         let body: PendingOrder;
         try {
