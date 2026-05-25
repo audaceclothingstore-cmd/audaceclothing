@@ -50,7 +50,7 @@ export function verifyPayUResponseHash(params: Record<string, string>, salt: str
   const base = [
     salt,
     params.status || "",
-    "", "", "", "", "", "",
+    "", "", "", "", "",
     params.udf5 || "",
     params.udf4 || "",
     params.udf3 || "",
