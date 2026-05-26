@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
@@ -19,6 +20,11 @@ import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpa
 import { Route as ApiPayuInitiateRouteImport } from './routes/api/payu/initiate'
 import { Route as ApiPayuCallbackRouteImport } from './routes/api/payu/callback'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -68,6 +74,7 @@ const ApiPayuCallbackRoute = ApiPayuCallbackRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/order/failure': typeof OrderFailureRoute
   '/order/success': typeof OrderSuccessRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/order/failure': typeof OrderFailureRoute
   '/order/success': typeof OrderSuccessRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/order/failure': typeof OrderFailureRoute
   '/order/success': typeof OrderSuccessRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/checkout'
+    | '/sitemap.xml'
     | '/order/failure'
     | '/order/success'
     | '/product/$handle'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/checkout'
+    | '/sitemap.xml'
     | '/order/failure'
     | '/order/success'
     | '/product/$handle'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/checkout'
+    | '/sitemap.xml'
     | '/order/failure'
     | '/order/success'
     | '/product/$handle'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   OrderFailureRoute: typeof OrderFailureRoute
   OrderSuccessRoute: typeof OrderSuccessRoute
   ProductHandleRoute: typeof ProductHandleRoute
@@ -149,6 +162,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
@@ -218,6 +238,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   OrderFailureRoute: OrderFailureRoute,
   OrderSuccessRoute: OrderSuccessRoute,
   ProductHandleRoute: ProductHandleRoute,
