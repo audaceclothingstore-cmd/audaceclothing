@@ -113,10 +113,14 @@ export const Route = createFileRoute("/api/razorpay/verify")({
         //    debited. The order will need manual reconciliation in that case.
         const raw = getCookie(`rzp_pending_${orderId}`);
         if (!raw) {
-          console.warn("[razorpay] pending cookie missing — payment OK but cannot place Shopify order automatically", { orderId });
+          console.warn("[razorpay] RECONCILE-MANUALLY pending cookie missing", {
+            razorpay_order_id: orderId,
+            razorpay_payment_id: paymentId,
+          });
           return Response.json({
             success: true,
             verified: true,
+            shopify_order_created: false,
             order_name: "",
             order_id: orderId,
             payment_id: paymentId,
@@ -128,9 +132,14 @@ export const Route = createFileRoute("/api/razorpay/verify")({
         try {
           pending = JSON.parse(raw) as PendingOrder;
         } catch {
+          console.error("[razorpay] RECONCILE-MANUALLY pending cookie unparseable", {
+            razorpay_order_id: orderId,
+            razorpay_payment_id: paymentId,
+          });
           return Response.json({
             success: true,
             verified: true,
+            shopify_order_created: false,
             order_name: "",
             order_id: orderId,
             payment_id: paymentId,
@@ -152,16 +161,42 @@ export const Route = createFileRoute("/api/razorpay/verify")({
           return Response.json({
             success: true,
             verified: true,
+            shopify_order_created: true,
             order_name: order.name,
             order_id: orderId,
             payment_id: paymentId,
           });
         } catch (e) {
-          console.error("Shopify order creation failed (razorpay) — payment IS captured", e);
-          // Payment succeeded — don't show failure to customer.
+          // FULL reconciliation log — payment IS captured, Shopify failed.
+          console.error("[razorpay] RECONCILE-MANUALLY Shopify order creation FAILED after captured payment", {
+            razorpay_order_id: orderId,
+            razorpay_payment_id: paymentId,
+            error: e instanceof Error ? e.message : String(e),
+            customer: {
+              email: pending.customer.email,
+              phone: pending.customer.phone,
+              name: `${pending.customer.firstName} ${pending.customer.lastName}`,
+            },
+            shipping: {
+              address1: pending.customer.address1,
+              address2: pending.customer.address2,
+              city: pending.customer.city,
+              province: pending.customer.province,
+              zip: pending.customer.zip,
+              country: pending.customer.country,
+            },
+            items: pending.items.map((i) => ({
+              variantId: i.variantId,
+              title: i.title,
+              quantity: i.quantity,
+              price: i.price,
+            })),
+            currency: pending.currency,
+          });
           return Response.json({
             success: true,
             verified: true,
+            shopify_order_created: false,
             order_name: "",
             order_id: orderId,
             payment_id: paymentId,
