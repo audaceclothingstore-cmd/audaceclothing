@@ -166,7 +166,8 @@ function ProductPage() {
             <div className="border-t border-border pt-5 space-y-2 font-mono text-xs">
               <p className="text-blood uppercase tracking-widest text-[10px]">// Details</p>
               <ul className="text-muted-foreground space-y-1">
-                <li>· 240gsm heavyweight combed cotton</li>
+                <li>· 240 GSM Oversized French Terry Cotton — the only fabric we make</li>
+                <li>· Heavyweight, structured drape with a soft brushed interior</li>
                 <li>· Garment washed for that worn-in feel</li>
                 <li>· Drop shoulder, boxy oversized cut</li>
                 <li>· Plastisol back print, made to last</li>
