@@ -112,8 +112,8 @@ function Index() {
       {/* USP STRIP */}
       <section className="mx-auto max-w-7xl px-5 md:px-8 py-16 grid md:grid-cols-3 gap-px bg-border">
         {[
+          { k: "240 GSM only", v: "Oversized French Terry Cotton · the only fabric we make" },
           { k: "48–72 hr delivery", v: "Dispatched within 24 hrs · India-wide" },
-          { k: "Prepaid only", v: "UPI · Cards · Wallets · Net banking" },
           { k: "Numbered run", v: "Drop 01 / 200 · No restocks · No returns" },
         ].map((c) => (
           <div key={c.k} className="bg-background p-8">
