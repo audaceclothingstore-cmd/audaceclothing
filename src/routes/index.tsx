@@ -51,7 +51,7 @@ function Index() {
               </a>
             </div>
             <div className="flex items-center gap-6 pt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              <span>★ 100% Cotton</span><span>★ Garment Washed</span><span>★ Drop Shoulder</span>
+              <span>★ 240 GSM French Terry</span><span>★ Oversized Fit</span><span>★ 100% Cotton</span>
             </div>
           </div>
           <div className="relative">
