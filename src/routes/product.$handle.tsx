@@ -25,7 +25,9 @@ function ProductPage() {
   const product = data;
   const variants = product?.node.variants.edges ?? [];
   const [variantId, setVariantId] = useState<string | null>(null);
-  const [activeImage, setActiveImage] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
   const selected = useMemo(
     () => variants.find((v) => v.node.id === variantId) ?? variants[0],
     [variants, variantId]
