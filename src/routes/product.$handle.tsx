@@ -66,10 +66,17 @@ function ProductPage() {
 
   const p = product.node;
   const images = p.images.edges;
-  const img = images[Math.min(activeImage, images.length - 1)]?.node;
   const price = parseFloat(selected.node.price.amount);
   const compare = selected.node.compareAtPrice ? parseFloat(selected.node.compareAtPrice.amount) : null;
   const cur = "₹";
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const scrollLeft = scrollRef.current.scrollLeft;
+    const width = scrollRef.current.offsetWidth;
+    const newIndex = Math.round(scrollLeft / width);
+    setActiveIndex(Math.min(newIndex, images.length - 1));
+  };
 
   const handleAdd = async () => {
     await addItem({
@@ -90,15 +97,23 @@ function ProductPage() {
 
         <div className="mt-6 grid md:grid-cols-2 gap-10">
           <div className="space-y-3">
-            <div className="aspect-square bg-bone border border-border overflow-hidden">
-              {img && <img src={img.url} alt={img.altText ?? p.title} className="w-full h-full object-cover" />}
+            <div
+              ref={scrollRef}
+              onScroll={handleScroll}
+              className="aspect-square bg-bone border border-border overflow-hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+            >
+              {images.map((im, i) => (
+                <div key={i} className="flex-shrink-0 w-full h-full snap-start">
+                  <img src={im.node.url} alt={im.node.altText ?? p.title} className="w-full h-full object-cover" />
+                </div>
+              ))}
             </div>
             <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-1">
               {images.slice(0, 8).map((im, i) => (
                 <div
                   key={i}
                   className={`flex-shrink-0 w-20 h-20 bg-bone border overflow-hidden snap-start ${
-                    i === activeImage ? "border-blood" : "border-border"
+                    i === activeIndex ? "border-blood" : "border-border"
                   }`}
                 >
                   <img src={im.node.url} alt="" className="w-full h-full object-cover" />
