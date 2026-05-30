@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { PRODUCT_BY_HANDLE_QUERY, PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
 import { Navbar } from "@/components/Navbar";
 import { ProductCard } from "@/components/ProductCard";
@@ -25,7 +25,9 @@ function ProductPage() {
   const product = data;
   const variants = product?.node.variants.edges ?? [];
   const [variantId, setVariantId] = useState<string | null>(null);
-  const [activeImage, setActiveImage] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
   const selected = useMemo(
     () => variants.find((v) => v.node.id === variantId) ?? variants[0],
     [variants, variantId]
@@ -64,10 +66,17 @@ function ProductPage() {
 
   const p = product.node;
   const images = p.images.edges;
-  const img = images[Math.min(activeImage, images.length - 1)]?.node;
   const price = parseFloat(selected.node.price.amount);
   const compare = selected.node.compareAtPrice ? parseFloat(selected.node.compareAtPrice.amount) : null;
   const cur = "₹";
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const scrollLeft = scrollRef.current.scrollLeft;
+    const width = scrollRef.current.offsetWidth;
+    const newIndex = Math.round(scrollLeft / width);
+    setActiveIndex(Math.min(newIndex, images.length - 1));
+  };
 
   const handleAdd = async () => {
     await addItem({
@@ -88,20 +97,27 @@ function ProductPage() {
 
         <div className="mt-6 grid md:grid-cols-2 gap-10">
           <div className="space-y-3">
-            <div className="aspect-square bg-bone border border-border overflow-hidden">
-              {img && <img src={img.url} alt={img.altText ?? p.title} className="w-full h-full object-cover" />}
+            <div
+              ref={scrollRef}
+              onScroll={handleScroll}
+              className="aspect-square bg-bone border border-border overflow-hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+            >
+              {images.map((im, i) => (
+                <div key={i} className="flex-shrink-0 w-full h-full snap-start">
+                  <img src={im.node.url} alt={im.node.altText ?? p.title} className="w-full h-full object-cover" />
+                </div>
+              ))}
             </div>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-1">
               {images.slice(0, 8).map((im, i) => (
-                <button
+                <div
                   key={i}
-                  onClick={() => setActiveImage(i)}
-                  className={`aspect-square bg-bone border overflow-hidden transition-colors ${
-                    i === activeImage ? "border-blood" : "border-border hover:border-blood/50"
+                  className={`flex-shrink-0 w-20 h-20 bg-bone border overflow-hidden snap-start ${
+                    i === activeIndex ? "border-blood" : "border-border"
                   }`}
                 >
                   <img src={im.node.url} alt="" className="w-full h-full object-cover" />
-                </button>
+                </div>
               ))}
             </div>
           </div>

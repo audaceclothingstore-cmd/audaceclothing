@@ -97,6 +97,12 @@
 }
 @utility animate-ticker { animation: ticker 30s linear infinite; }
 
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+@utility scrollbar-hide::-webkit-scrollbar { display: none; }
+
 @keyframes slash {
   0% { transform: translateX(-100%) skewX(-12deg); }
   100% { transform: translateX(200%) skewX(-12deg); }
