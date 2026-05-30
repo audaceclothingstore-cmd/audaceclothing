@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { PRODUCT_BY_HANDLE_QUERY, PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
 import { Navbar } from "@/components/Navbar";
 import { ProductCard } from "@/components/ProductCard";
