@@ -25,6 +25,7 @@ function ProductPage() {
   const product = data;
   const variants = product?.node.variants.edges ?? [];
   const [variantId, setVariantId] = useState<string | null>(null);
+  const [activeImage, setActiveImage] = useState(0);
   const selected = useMemo(
     () => variants.find((v) => v.node.id === variantId) ?? variants[0],
     [variants, variantId]
@@ -62,7 +63,8 @@ function ProductPage() {
   }
 
   const p = product.node;
-  const img = p.images.edges[0]?.node;
+  const images = p.images.edges;
+  const img = images[Math.min(activeImage, images.length - 1)]?.node;
   const price = parseFloat(selected.node.price.amount);
   const compare = selected.node.compareAtPrice ? parseFloat(selected.node.compareAtPrice.amount) : null;
   const cur = "₹";
@@ -90,10 +92,16 @@ function ProductPage() {
               {img && <img src={img.url} alt={img.altText ?? p.title} className="w-full h-full object-cover" />}
             </div>
             <div className="grid grid-cols-4 gap-2">
-              {p.images.edges.slice(0, 4).map((im, i) => (
-                <div key={i} className="aspect-square bg-bone border border-border overflow-hidden">
+              {images.slice(0, 8).map((im, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveImage(i)}
+                  className={`aspect-square bg-bone border overflow-hidden transition-colors ${
+                    i === activeImage ? "border-blood" : "border-border hover:border-blood/50"
+                  }`}
+                >
                   <img src={im.node.url} alt="" className="w-full h-full object-cover" />
-                </div>
+                </button>
               ))}
             </div>
           </div>
