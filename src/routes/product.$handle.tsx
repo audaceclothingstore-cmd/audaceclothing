@@ -91,17 +91,16 @@ function ProductPage() {
             <div className="aspect-square bg-bone border border-border overflow-hidden">
               {img && <img src={img.url} alt={img.altText ?? p.title} className="w-full h-full object-cover" />}
             </div>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-1">
               {images.slice(0, 8).map((im, i) => (
-                <button
+                <div
                   key={i}
-                  onClick={() => setActiveImage(i)}
-                  className={`aspect-square bg-bone border overflow-hidden transition-colors ${
-                    i === activeImage ? "border-blood" : "border-border hover:border-blood/50"
+                  className={`flex-shrink-0 w-20 h-20 bg-bone border overflow-hidden snap-start ${
+                    i === activeImage ? "border-blood" : "border-border"
                   }`}
                 >
                   <img src={im.node.url} alt="" className="w-full h-full object-cover" />
-                </button>
+                </div>
               ))}
             </div>
           </div>
