@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { PRODUCT_BY_HANDLE_QUERY, PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
 import { Navbar } from "@/components/Navbar";
 import { ProductCard } from "@/components/ProductCard";
 import { useCartStore } from "@/stores/cartStore";
+import { trackPixel } from "@/lib/metaPixel";
 import { Loader2, Truck, Flame, CreditCard, PackageX, BadgeCheck, Lock, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/product/$handle")({
@@ -35,6 +36,19 @@ function ProductPage() {
 
   const addItem = useCartStore((s) => s.addItem);
   const isLoadingCart = useCartStore((s) => s.isLoading);
+
+  useEffect(() => {
+    if (product && selected) {
+      trackPixel("ViewContent", {
+        content_ids: [selected.node.id],
+        content_name: product.node.title,
+        content_type: "product",
+        value: parseFloat(selected.node.price.amount),
+        currency: selected.node.price.currencyCode,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.node.id, selected?.node.id]);
 
   if (isLoading) {
     return (
