@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { trackPixel } from "@/lib/metaPixel";
 import {
   createShopifyCart,
   addLineToShopifyCart,
@@ -54,10 +55,14 @@ export const useCartStore = create<CartStore>()(
         const { items, cartId, clearCart } = get();
         const existing = items.find((i) => i.variantId === item.variantId);
         set({ isLoading: true, isOpen: true });
+        let added = false;
         try {
           if (!cartId) {
             const r = await createShopifyCart({ ...item, lineId: null });
-            if (r) set({ cartId: r.cartId, checkoutUrl: r.checkoutUrl, items: [{ ...item, lineId: r.lineId }] });
+            if (r) {
+              set({ cartId: r.cartId, checkoutUrl: r.checkoutUrl, items: [{ ...item, lineId: r.lineId }] });
+              added = true;
+            }
           } else if (existing) {
             const q = existing.quantity + item.quantity;
             if (!existing.lineId) return;
@@ -65,16 +70,30 @@ export const useCartStore = create<CartStore>()(
             if (r.success) {
               const cur = get().items;
               set({ items: cur.map((i) => (i.variantId === item.variantId ? { ...i, quantity: q } : i)) });
+              added = true;
             } else if (r.cartNotFound) clearCart();
           } else {
             const r = await addLineToShopifyCart(cartId, { ...item, lineId: null });
             if (r.success) {
               const cur = get().items;
               set({ items: [...cur, { ...item, lineId: r.lineId ?? null }] });
+              added = true;
             } else if (r.cartNotFound) clearCart();
           }
         } catch (e) { console.error(e); }
-        finally { set({ isLoading: false }); }
+        finally {
+          set({ isLoading: false });
+          if (added) {
+            trackPixel("AddToCart", {
+              content_ids: [item.variantId],
+              content_name: item.product.node.title,
+              content_type: "product",
+              value: parseFloat(item.price.amount),
+              currency: item.price.currencyCode,
+              num_items: item.quantity,
+            });
+          }
+        }
       },
 
       updateQuantity: async (variantId, quantity) => {

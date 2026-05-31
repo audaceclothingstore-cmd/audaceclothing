@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useCartStore } from "@/stores/cartStore";
+import { trackPixel } from "@/lib/metaPixel";
 import { CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/order/success")({
@@ -20,8 +21,21 @@ export const Route = createFileRoute("/order/success")({
 function SuccessPage() {
   const { order, txnid } = Route.useSearch();
   const clearCart = useCartStore((s) => s.clearCart);
+  const items = useCartStore((s) => s.items);
+  const total = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
+  const trackedRef = useRef(false);
 
   useEffect(() => {
+    if (!trackedRef.current && items.length > 0) {
+      trackedRef.current = true;
+      trackPixel("Purchase", {
+        content_ids: items.map((i) => i.variantId),
+        content_type: "product",
+        value: total,
+        currency: items[0]?.price.currencyCode || "INR",
+        num_items: items.reduce((s, i) => s + i.quantity, 0),
+      });
+    }
     clearCart();
   }, [clearCart]);
 

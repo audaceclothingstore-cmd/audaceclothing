@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { trackPixel } from "@/lib/metaPixel";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -69,6 +70,19 @@ function CheckoutPage() {
 
   useEffect(() => {
     void loadRazorpay();
+  }, []);
+
+  useEffect(() => {
+    if (items.length > 0) {
+      trackPixel("InitiateCheckout", {
+        content_ids: items.map((i) => i.variantId),
+        content_type: "product",
+        value: total,
+        currency: currencyCode,
+        num_items: items.reduce((s, i) => s + i.quantity, 0),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const total = items.reduce(
