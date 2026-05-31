@@ -90,7 +90,7 @@ function ProductPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <Navbar />
       <div className="mx-auto max-w-7xl px-5 md:px-8 py-10 md:py-16">
         <Link to="/" className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-blood">← Back to drop</Link>
