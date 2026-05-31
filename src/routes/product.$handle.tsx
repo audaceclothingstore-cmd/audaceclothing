@@ -90,7 +90,7 @@ function ProductPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <Navbar />
       <div className="mx-auto max-w-7xl px-5 md:px-8 py-10 md:py-16">
         <Link to="/" className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-blood">← Back to drop</Link>
@@ -100,15 +100,16 @@ function ProductPage() {
             <div
               ref={scrollRef}
               onScroll={handleScroll}
-              className="aspect-square bg-bone border border-border overflow-hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+              className="relative w-full max-w-full aspect-square bg-bone border border-border flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide overscroll-x-contain touch-pan-x"
+              style={{ WebkitOverflowScrolling: "touch" }}
             >
               {images.map((im, i) => (
-                <div key={i} className="flex-shrink-0 w-full h-full snap-start">
-                  <img src={im.node.url} alt={im.node.altText ?? p.title} className="w-full h-full object-cover" />
+                <div key={i} className="shrink-0 basis-full w-full h-full snap-start snap-always">
+                  <img src={im.node.url} alt={im.node.altText ?? p.title} className="block w-full h-full object-cover pointer-events-none select-none" draggable={false} />
                 </div>
               ))}
             </div>
-            <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-1">
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 overscroll-x-contain">
               {images.slice(0, 8).map((im, i) => (
                 <div
                   key={i}
