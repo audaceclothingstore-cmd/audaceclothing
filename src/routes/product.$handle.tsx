@@ -110,7 +110,7 @@ function ProductPage() {
         <Link to="/" className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-blood">← Back to drop</Link>
 
         <div className="mt-6 grid md:grid-cols-2 gap-10">
-          <div className="space-y-3">
+          <div className="space-y-3 min-w-0 w-full">
             <div
               ref={scrollRef}
               onScroll={handleScroll}
@@ -146,7 +146,7 @@ function ProductPage() {
             </div>
           </div>
 
-          <div className="space-y-7">
+          <div className="space-y-7 min-w-0">
             <div className="inline-flex items-center gap-2 border border-blood text-blood px-3 py-1 font-mono text-[10px] uppercase tracking-widest">
               <Flame className="h-3 w-3" /> Limited · Drop 01 / 200
             </div>
