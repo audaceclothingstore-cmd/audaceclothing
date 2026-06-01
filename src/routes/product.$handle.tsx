@@ -125,14 +125,23 @@ function ProductPage() {
             </div>
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 overscroll-x-contain">
               {images.slice(0, 8).map((im, i) => (
-                <div
+                <button
                   key={i}
-                  className={`flex-shrink-0 w-20 h-20 bg-bone border overflow-hidden snap-start ${
-                    i === activeIndex ? "border-blood" : "border-border"
+                  type="button"
+                  onClick={() => {
+                    if (!scrollRef.current) return;
+                    scrollRef.current.scrollTo({
+                      left: i * scrollRef.current.offsetWidth,
+                      behavior: "smooth",
+                    });
+                    setActiveIndex(i);
+                  }}
+                  className={`flex-shrink-0 w-20 h-20 bg-bone border overflow-hidden snap-start cursor-pointer transition-colors ${
+                    i === activeIndex ? "border-blood" : "border-border hover:border-blood/60"
                   }`}
                 >
-                  <img src={im.node.url} alt="" className="w-full h-full object-cover" />
-                </div>
+                  <img src={im.node.url} alt="" className="w-full h-full object-cover pointer-events-none" />
+                </button>
               ))}
             </div>
           </div>
