@@ -110,7 +110,7 @@ function ProductPage() {
         <Link to="/" className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-blood">← Back to drop</Link>
 
         <div className="mt-6 grid md:grid-cols-2 gap-10">
-          <div className="space-y-3">
+          <div className="space-y-3 min-w-0 w-full">
             <div
               ref={scrollRef}
               onScroll={handleScroll}
