@@ -146,7 +146,7 @@ function ProductPage() {
             </div>
           </div>
 
-          <div className="space-y-7">
+          <div className="space-y-7 min-w-0">
             <div className="inline-flex items-center gap-2 border border-blood text-blood px-3 py-1 font-mono text-[10px] uppercase tracking-widest">
               <Flame className="h-3 w-3" /> Limited · Drop 01 / 200
             </div>
