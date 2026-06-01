@@ -6,6 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { ProductCard } from "@/components/ProductCard";
 import { useCartStore } from "@/stores/cartStore";
 import { trackPixel } from "@/lib/metaPixel";
+import { getDropForHandle, formatDropLabel } from "@/lib/drops";
 import { Loader2, Truck, Flame, CreditCard, PackageX, BadgeCheck, Lock, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/product/$handle")({
@@ -148,7 +149,7 @@ function ProductPage() {
 
           <div className="space-y-7 min-w-0">
             <div className="inline-flex items-center gap-2 border border-blood text-blood px-3 py-1 font-mono text-[10px] uppercase tracking-widest">
-              <Flame className="h-3 w-3" /> Limited · Drop 01 / 200
+              <Flame className="h-3 w-3" /> Limited · {formatDropLabel(getDropForHandle(handle))} / 200
             </div>
             <h1 className="font-display text-5xl md:text-6xl uppercase leading-[0.9]">{p.title}</h1>
 
@@ -265,21 +266,24 @@ function ProductPage() {
 
 
 function MoreFromDrop({ currentHandle }: { currentHandle: string }) {
+  const currentDrop = getDropForHandle(currentHandle);
   const { data, isLoading } = useQuery({
     queryKey: ["products", "more"],
     queryFn: async () => {
-      const res = await storefrontApiRequest(PRODUCTS_QUERY, { first: 8, query: null });
+      const res = await storefrontApiRequest(PRODUCTS_QUERY, { first: 20, query: null });
       return (res?.data?.products?.edges ?? []) as ShopifyProduct[];
     },
   });
-  const others = (data ?? []).filter((p) => p.node.handle !== currentHandle).slice(0, 3);
+  const others = (data ?? [])
+    .filter((p) => p.node.handle !== currentHandle && getDropForHandle(p.node.handle) === currentDrop)
+    .slice(0, 3);
 
   return (
     <section className="mt-20 border-t border-border pt-12">
       <div className="flex items-end justify-between mb-8 flex-wrap gap-3 border-b border-border pb-4">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-blood mb-2">// More from</p>
-          <h2 className="font-display text-4xl uppercase">Drop 01</h2>
+          <h2 className="font-display text-4xl uppercase">{formatDropLabel(currentDrop)}</h2>
         </div>
         <Link to="/" hash="drop" className="font-mono text-[10px] uppercase tracking-widest hover:text-blood">See the full drop →</Link>
       </div>
@@ -290,7 +294,7 @@ function MoreFromDrop({ currentHandle }: { currentHandle: string }) {
       ) : others.length === 0 ? (
         <div className="border border-dashed border-border p-10 text-center">
           <p className="font-display text-2xl uppercase">More dropping soon.</p>
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">Drop 02 in the works.</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">Next pieces in the works.</p>
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

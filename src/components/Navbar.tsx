@@ -15,6 +15,7 @@ export function Navbar() {
         </Link>
         <nav className="hidden md:flex items-center gap-8 font-mono text-[11px] uppercase tracking-[0.18em]">
           <Link to="/" hash="drop" className="hover:text-blood transition-colors">Drop 01</Link>
+          <Link to="/" hash="drop-02" className="hover:text-blood transition-colors">Drop 02</Link>
           <Link to="/" hash="manifesto" className="hover:text-blood transition-colors">Manifesto</Link>
           <Link to="/" hash="sizing" className="hover:text-blood transition-colors">Sizing</Link>
         </nav>

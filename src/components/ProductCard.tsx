@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { ShopifyProduct } from "@/lib/shopify";
+import { getDropForHandle, formatDropLabel } from "@/lib/drops";
 
 export function ProductCard({ product }: { product: ShopifyProduct }) {
   const p = product.node;
@@ -36,7 +37,7 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
       <div className="p-4 flex items-end justify-between gap-3">
         <div className="min-w-0">
           <h3 className="font-display uppercase text-xl leading-none tracking-tight truncate">{p.title}</h3>
-          <p className="font-mono text-[10px] uppercase text-muted-foreground mt-1">Drop 01 · Oversized</p>
+          <p className="font-mono text-[10px] uppercase text-muted-foreground mt-1">{formatDropLabel(getDropForHandle(p.handle))} · Oversized</p>
         </div>
         <div className="text-right">
           {compare && compare > price && (
