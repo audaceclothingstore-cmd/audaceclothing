@@ -6,7 +6,7 @@ import { Ticker } from "@/components/Ticker";
 import { ProductCard } from "@/components/ProductCard";
 import { getDropForHandle } from "@/lib/drops";
 import logo from "@/assets/audace-logo.png";
-import heroTee from "@/assets/tee-loved-hard.png";
+import heroAsset from "@/assets/hero-built-different.png.asset.json";
 
 export const Route = createFileRoute("/")({ component: Index });
 
