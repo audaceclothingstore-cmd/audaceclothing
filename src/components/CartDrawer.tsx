@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader2, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { shopifyImg } from "@/lib/shopify";
 
 export function CartDrawer() {
   const navigate = useNavigate();
@@ -45,10 +46,13 @@ export function CartDrawer() {
                   <div className="w-20 h-20 bg-secondary overflow-hidden flex-shrink-0">
                     {item.product.node.images?.edges?.[0]?.node && (
                       <img
-                        src={item.product.node.images.edges[0].node.url}
+                        src={shopifyImg(item.product.node.images.edges[0].node.url, 160, 160)}
                         alt={item.product.node.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                       />
+
                     )}
                   </div>
                   <div className="flex-1 min-w-0">

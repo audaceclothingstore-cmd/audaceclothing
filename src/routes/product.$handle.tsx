@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState, useRef, useEffect } from "react";
-import { PRODUCT_BY_HANDLE_QUERY, PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { PRODUCT_BY_HANDLE_QUERY, PRODUCTS_QUERY, storefrontApiRequest, type ShopifyProduct, shopifyImg } from "@/lib/shopify";
 import { Navbar } from "@/components/Navbar";
 import { ProductCard } from "@/components/ProductCard";
 import { useCartStore } from "@/stores/cartStore";
@@ -120,7 +120,15 @@ function ProductPage() {
             >
               {images.map((im, i) => (
                 <div key={i} className="shrink-0 basis-full w-full h-full snap-start snap-always">
-                  <img src={im.node.url} alt={im.node.altText ?? p.title} className="block w-full h-full object-cover pointer-events-none select-none" draggable={false} />
+                  <img
+                    src={shopifyImg(im.node.url, 1200, 1200)}
+                    alt={im.node.altText ?? p.title}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    {...(i === 0 ? { fetchPriority: "high" as const } : {})}
+                    className="block w-full h-full object-cover pointer-events-none select-none"
+                    draggable={false}
+                  />
                 </div>
               ))}
             </div>
@@ -141,7 +149,7 @@ function ProductPage() {
                     i === activeIndex ? "border-blood" : "border-border hover:border-blood/60"
                   }`}
                 >
-                  <img src={im.node.url} alt="" className="w-full h-full object-cover pointer-events-none" />
+                  <img src={shopifyImg(im.node.url, 160, 160)} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover pointer-events-none" />
                 </button>
               ))}
             </div>
