@@ -6,7 +6,7 @@ import { Ticker } from "@/components/Ticker";
 import { ProductCard } from "@/components/ProductCard";
 import { getDropForHandle } from "@/lib/drops";
 import logo from "@/assets/audace-logo.png";
-import heroTee from "@/assets/tee-loved-hard.png";
+import heroAsset from "@/assets/hero-built-different.png.asset.json";
 
 export const Route = createFileRoute("/")({ component: Index });
 
@@ -27,20 +27,25 @@ function Index() {
       <Ticker items={["Drop 01 — Loved Hard. Left Harder.", "Delivery 48–72 hrs across India", "Prepaid only · No returns", "Limited run · 200 pieces", "Wear the nerve"]} />
 
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-border">
+      <section className="relative overflow-hidden border-b border-border bg-ink">
         <div className="absolute inset-0 pointer-events-none opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
         <div className="relative mx-auto max-w-7xl px-5 md:px-8 py-14 md:py-24 grid md:grid-cols-2 gap-10 items-center">
-          <div className="space-y-7">
-            <div className="inline-flex items-center gap-2 border border-border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.25em]">
+          <div className="space-y-7 order-2 md:order-1">
+            <div className="inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
               <span className="h-1.5 w-1.5 bg-blood animate-pulse rounded-full" />
-              Drop 01 · Live now
+              03:41 AM · Drop 01 live
             </div>
             <h1 className="font-display text-6xl sm:text-7xl md:text-8xl leading-[0.85] uppercase tracking-tight">
-              Wear<br />the <span className="text-blood">nerve.</span>
+              Built<br />different.<br />
+              <span className="text-blood">Made to last.</span>
             </h1>
+            <div className="h-px w-24 bg-border" />
+            <p className="font-display text-2xl md:text-3xl uppercase leading-tight">
+              No crowd.<br /><span className="text-blood">No compromise.</span>
+            </p>
             <p className="font-body text-base md:text-lg text-muted-foreground max-w-md">
-              Heavyweight oversized tees for the ones who feel too much and apologize for none of it.
-              Hand-printed. Limited to <span className="text-foreground font-medium">200 pieces.</span> When they're gone, they're gone.
+              Heavyweight oversized tees cut for the ones who move alone.
+              240 GSM. Hand-printed. Limited to <span className="text-foreground font-medium">200 pieces.</span> When they're gone, they're gone.
             </p>
             <div className="flex flex-wrap gap-3">
               <a href="#drop" className="group inline-flex items-center gap-3 bg-blood text-foreground px-6 py-4 font-display text-xl uppercase tracking-wide hover:bg-blood/90">
@@ -51,17 +56,17 @@ function Index() {
                 Read manifesto
               </a>
             </div>
-            <div className="flex items-center gap-6 pt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
               <span>★ 240 GSM French Terry</span><span>★ Oversized Fit</span><span>★ 100% Cotton</span>
             </div>
           </div>
-          <div className="relative">
+          <div className="relative order-1 md:order-2">
             <div className="absolute -inset-3 bg-blood/20 blur-3xl pointer-events-none" />
-            <div className="relative aspect-square bg-bone border border-border overflow-hidden">
-              <img src={heroTee} alt="Audace Loved Hard Left Harder tee" className="w-full h-full object-cover" />
-              <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between font-mono text-[10px] uppercase tracking-widest text-ink">
+            <div className="relative aspect-[2/3] bg-ink border border-border overflow-hidden">
+              <img src={heroAsset.url} alt="Audace — Built different. Made to last." className="w-full h-full object-cover" fetchPriority="high" />
+              <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between font-mono text-[10px] uppercase tracking-widest text-foreground">
                 <span>Drop 01 / 200</span>
-                <span>₹1199</span>
+                <span>Wear the nerve</span>
               </div>
             </div>
           </div>
