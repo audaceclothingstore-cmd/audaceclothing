@@ -5,6 +5,24 @@ export const SHOPIFY_STORE_PERMANENT_DOMAIN = "s1afkk-c2.myshopify.com";
 export const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 export const SHOPIFY_STOREFRONT_TOKEN = "0610cf13f9bf6ed94f424c313efbe9d0";
 
+/**
+ * Resize/convert a Shopify CDN image URL for perf.
+ * Shopify CDN supports ?width=, ?height=, ?crop= query params and content-negotiates WebP/AVIF.
+ */
+export function shopifyImg(url: string | undefined | null, width: number, height?: number): string {
+  if (!url) return "";
+  try {
+    const u = new URL(url);
+    // Only transform shopify CDN
+    if (!u.hostname.includes("cdn.shopify.com")) return url;
+    u.searchParams.set("width", String(Math.round(width)));
+    if (height) u.searchParams.set("height", String(Math.round(height)));
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
 export interface ShopifyProduct {
   node: {
     id: string;
