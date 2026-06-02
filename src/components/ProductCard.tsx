@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import type { ShopifyProduct } from "@/lib/shopify";
+import { type ShopifyProduct, shopifyImg } from "@/lib/shopify";
 import { getDropForHandle, formatDropLabel } from "@/lib/drops";
 
 export function ProductCard({ product }: { product: ShopifyProduct }) {
@@ -20,8 +20,10 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
       <div className="relative aspect-square bg-bone overflow-hidden">
         {img && (
           <img
-            src={img.url}
+            src={shopifyImg(img.url, 800, 800)}
             alt={img.altText ?? p.title}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
         )}
