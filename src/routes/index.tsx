@@ -102,28 +102,37 @@ function Index() {
         })()}
       </section>
 
-      {/* MANIFESTO */}
+      {/* SOCIAL PROOF / MANIFESTO */}
       <section id="manifesto" className="border-y border-border bg-card">
         <div className="mx-auto max-w-5xl px-5 md:px-8 py-20 md:py-28 text-center space-y-8">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-blood">// Manifesto</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-blood">// Loved by the loud ones</p>
           <h2 className="font-display text-5xl md:text-7xl leading-[0.9] uppercase">
-            We don't make<br />clothes for the <span className="text-blood">quiet</span>.
+            "I've never had a tee<br />get <span className="text-blood">this many</span> compliments."
           </h2>
-          <p className="max-w-2xl mx-auto font-body text-base md:text-lg text-muted-foreground">
-            Audace is for the ones who text first. Who cry at songs. Who fall hard and leave harder.
-            Every drop is small on purpose. Wear it like you mean it — because we did.
-          </p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">— Aarav M. · Verified buyer · Drop 01</p>
+          <div className="grid sm:grid-cols-3 gap-px bg-border max-w-3xl mx-auto mt-12">
+            {[
+              { n: "200+", l: "5-star reviews" },
+              { n: "100%", l: "Sold out · Drop 01" },
+              { n: "48hr", l: "Avg. dispatch" },
+            ].map((s) => (
+              <div key={s.l} className="bg-card p-6">
+                <p className="font-display text-4xl text-blood">{s.n}</p>
+                <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mt-1">{s.l}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <Ticker items={["Audace 2026", "Wear the nerve", "Made for the loud hearts", "Limited · Numbered"]} />
+      <Ticker items={["★★★★★ 4.9 / 5 · 200+ verified buyers", "Drop 01 sold out in 9 days", "Don't think. Drop 02 won't wait."]} />
 
       {/* USP STRIP */}
       <section className="mx-auto max-w-7xl px-5 md:px-8 py-16 grid md:grid-cols-3 gap-px bg-border">
         {[
-          { k: "240 GSM only", v: "Oversized French Terry Cotton · the only fabric we make" },
-          { k: "48–72 hr delivery", v: "Dispatched within 24 hrs · India-wide" },
-          { k: "Numbered run", v: "Drop 01 / 200 · No restocks · No returns" },
+          { k: "Built to outlast", v: "240 GSM heavyweight cotton · won't thin out after 50 washes" },
+          { k: "At your door in 48 hrs", v: "Dispatched within 24 hrs · Free shipping over ₹1499" },
+          { k: "Yours, only 200 made", v: "Hand-numbered 1–200 · Never restocked · Easy 7-day exchange" },
         ].map((c) => (
           <div key={c.k} className="bg-background p-8">
             <p className="font-display text-2xl uppercase">{c.k}</p>
@@ -131,6 +140,7 @@ function Index() {
           </div>
         ))}
       </section>
+
 
       {/* SIZING */}
       <section id="sizing" className="border-t border-border">
