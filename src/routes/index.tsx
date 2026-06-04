@@ -89,12 +89,10 @@ function Index() {
             <div className="border border-dashed border-border p-16 text-center">
               <p className="font-display text-3xl uppercase">No products found</p>
               <p className="font-mono text-xs uppercase text-muted-foreground mt-2">Drop incoming.</p>
-                </div>
-                <p className="hidden md:block font-mono text-[10px] uppercase text-muted-foreground">Fresh · Limited</p>
-              </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {drop2.map((p) => <ProductCard key={p.node.id} product={p} />)}
-              </div>
+            </div>
+          ) : (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {drop2.map((p) => <ProductCard key={p.node.id} product={p} />)}
             </div>
           );
         })()}
