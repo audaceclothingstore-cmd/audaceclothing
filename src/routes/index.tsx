@@ -33,41 +33,37 @@ function Index() {
           <div className="space-y-7 order-2 md:order-1">
             <div className="inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
               <span className="h-1.5 w-1.5 bg-blood animate-pulse rounded-full" />
-              03:41 AM · Drop 01 live
+              Drop 01 · 200 pieces · Numbered
             </div>
             <h1 className="font-display text-6xl sm:text-7xl md:text-8xl leading-[0.85] uppercase tracking-tight">
-              Built<br />different.<br />
-              <span className="text-blood">Made to last.</span>
+              For the<br />few who<br />
+              <span className="text-blood">refuse to blend.</span>
             </h1>
             <div className="h-px w-24 bg-border" />
             <p className="font-display text-2xl md:text-3xl uppercase leading-tight">
-              No crowd.<br /><span className="text-blood">No compromise.</span>
+              Worn by <span className="text-blood">a hundred.</span><br />Recognised by the rest.
             </p>
             <p className="font-body text-base md:text-lg text-muted-foreground max-w-md">
-              Heavyweight oversized tees cut for the ones who move alone.
-              240 GSM. Hand-printed. Limited to <span className="text-foreground font-medium">200 pieces.</span> When they're gone, they're gone.
+              Audace isn't sold to everyone. 240 GSM heavyweight cotton, hand-finished in small numbered runs.
+              Once the 200 are claimed, the drop is sealed — <span className="text-foreground font-medium">forever.</span>
             </p>
             <div className="flex flex-wrap gap-3">
               <a href="#drop" className="group inline-flex items-center gap-3 bg-blood text-foreground px-6 py-4 font-display text-xl uppercase tracking-wide hover:bg-blood/90">
-                Shop the drop
+                Claim your number
                 <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
               </a>
               <a href="#manifesto" className="inline-flex items-center gap-3 border border-border px-6 py-4 font-display text-xl uppercase tracking-wide hover:border-blood">
-                Read manifesto
+                The manifesto
               </a>
             </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              <span>★ 240 GSM French Terry</span><span>★ Oversized Fit</span><span>★ 100% Cotton</span>
+              <span>★ Invite-grade fabric</span><span>★ Hand-numbered</span><span>★ Never restocked</span>
             </div>
           </div>
           <div className="relative order-1 md:order-2">
             <div className="absolute -inset-3 bg-blood/20 blur-3xl pointer-events-none" />
             <div className="relative aspect-[2/3] bg-ink border border-border overflow-hidden">
-              <img src={heroAsset.url} alt="Audace — Built different. Made to last." className="w-full h-full object-cover" fetchPriority="high" />
-              <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between font-mono text-[10px] uppercase tracking-widest text-foreground">
-                <span>Drop 01 / 200</span>
-                <span>Wear the nerve</span>
-              </div>
+              <img src={heroAsset.url} alt="Audace Drop 01" className="w-full h-full object-cover" fetchPriority="high" />
             </div>
           </div>
         </div>
