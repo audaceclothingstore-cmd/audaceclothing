@@ -69,12 +69,12 @@ function Index() {
         </div>
       </section>
 
-      {/* PRODUCT GRID — DROP 01 */}
+      {/* PRODUCT GRID — DROP 02 */}
       <section id="drop" className="mx-auto max-w-7xl px-5 md:px-8 py-16 md:py-24">
         <div className="flex items-end justify-between mb-10 border-b border-border pb-4">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-blood mb-2">// The drop</p>
-            <h2 className="font-display text-4xl md:text-5xl uppercase tracking-tight">Drop 01</h2>
+            <h2 className="font-display text-4xl md:text-5xl uppercase tracking-tight">Drop 02</h2>
           </div>
           <p className="hidden md:block font-mono text-[10px] uppercase text-muted-foreground">Limited · No restocks</p>
         </div>
@@ -84,29 +84,11 @@ function Index() {
             {[0, 1, 2].map((i) => <div key={i} className="aspect-[4/5] bg-card border border-border animate-pulse" />)}
           </div>
         ) : (() => {
-          const drop1 = products.filter((p) => getDropForHandle(p.node.handle) === 1);
-          return drop1.length === 0 ? (
+          const drop2 = products.filter((p) => getDropForHandle(p.node.handle) === 2);
+          return drop2.length === 0 ? (
             <div className="border border-dashed border-border p-16 text-center">
               <p className="font-display text-3xl uppercase">No products found</p>
               <p className="font-mono text-xs uppercase text-muted-foreground mt-2">Drop incoming.</p>
-            </div>
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {drop1.map((p) => <ProductCard key={p.node.id} product={p} />)}
-            </div>
-          );
-        })()}
-
-        {/* DROP 02 */}
-        {(() => {
-          const drop2 = products.filter((p) => getDropForHandle(p.node.handle) === 2);
-          if (isLoading || drop2.length === 0) return null;
-          return (
-            <div id="drop-02" className="mt-20">
-              <div className="flex items-end justify-between mb-10 border-b border-border pb-4">
-                <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-blood mb-2">// New drop</p>
-                  <h2 className="font-display text-4xl md:text-5xl uppercase tracking-tight">Drop 02</h2>
                 </div>
                 <p className="hidden md:block font-mono text-[10px] uppercase text-muted-foreground">Fresh · Limited</p>
               </div>
