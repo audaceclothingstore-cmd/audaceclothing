@@ -169,6 +169,21 @@ function Index() {
         </div>
       </section>
 
+      {/* FINAL CTA */}
+      <section className="bg-blood">
+        <div className="mx-auto max-w-5xl px-5 md:px-8 py-16 md:py-20 text-center space-y-6">
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-foreground/80">// Last call</p>
+          <h2 className="font-display text-4xl md:text-6xl uppercase leading-[0.9]">
+            130 of 200 already gone.<br />Will you wear #131 — or watch?
+          </h2>
+          <a href="#drop" className="inline-flex items-center gap-3 bg-foreground text-blood px-8 py-5 font-display text-2xl uppercase tracking-wide hover:bg-foreground/90">
+            Claim your number →
+          </a>
+          <p className="font-mono text-[10px] uppercase tracking-widest text-foreground/80">Secure checkout · COD available · Easy 7-day exchange</p>
+        </div>
+      </section>
+
+
       {/* FOOTER */}
       <footer className="border-t border-border">
         <div className="mx-auto max-w-7xl px-5 md:px-8 py-12 grid md:grid-cols-3 gap-8 items-start">
