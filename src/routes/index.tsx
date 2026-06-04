@@ -24,7 +24,7 @@ function Index() {
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
 
-      <Ticker items={["Drop 01 — Loved Hard. Left Harder.", "Delivery 48–72 hrs across India", "Prepaid only · No returns", "Limited run · 200 pieces", "Wear the nerve"]} />
+      <Ticker items={["Drop 02 live — 200 pieces only", "Already 70% claimed", "Free shipping over ₹1499", "48hr dispatch · Pan-India", "Once sold, gone forever", "Wear the nerve"]} />
 
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-border bg-ink">
@@ -33,37 +33,40 @@ function Index() {
           <div className="space-y-7 order-2 md:order-1">
             <div className="inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
               <span className="h-1.5 w-1.5 bg-blood animate-pulse rounded-full" />
-              Drop 01 · 200 pieces · Numbered
+              Drop 02 live · Only 200 made · Selling fast
             </div>
             <h1 className="font-display text-6xl sm:text-7xl md:text-8xl leading-[0.85] uppercase tracking-tight">
-              For the<br />few who<br />
-              <span className="text-blood">refuse to blend.</span>
+              Only <span className="text-blood">200</span><br />will ever<br />own this.
             </h1>
             <div className="h-px w-24 bg-border" />
             <p className="font-display text-2xl md:text-3xl uppercase leading-tight">
-              Worn by <span className="text-blood">a hundred.</span><br />Recognised by the rest.
+              When it's gone,<br /><span className="text-blood">it's gone for good.</span>
             </p>
             <p className="font-body text-base md:text-lg text-muted-foreground max-w-md">
-              Audace isn't sold to everyone. 240 GSM heavyweight cotton, hand-finished in small numbered runs.
-              Once the 200 are claimed, the drop is sealed — <span className="text-foreground font-medium">forever.</span>
+              240 GSM heavyweight cotton. Hand-numbered 1 to 200. No restocks. No second chances.
+              <span className="text-foreground font-medium"> Over 130 already claimed</span> — yours is waiting, but not for long.
             </p>
             <div className="flex flex-wrap gap-3">
-              <a href="#drop" className="group inline-flex items-center gap-3 bg-blood text-foreground px-6 py-4 font-display text-xl uppercase tracking-wide hover:bg-blood/90">
+              <a href="#drop" className="group inline-flex items-center gap-3 bg-blood text-foreground px-6 py-4 font-display text-xl uppercase tracking-wide hover:bg-blood/90 shadow-lg shadow-blood/30">
                 Claim your number
                 <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
               </a>
               <a href="#manifesto" className="inline-flex items-center gap-3 border border-border px-6 py-4 font-display text-xl uppercase tracking-wide hover:border-blood">
-                The manifesto
+                Why us
               </a>
             </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              <span>★ Invite-grade fabric</span><span>★ Hand-numbered</span><span>★ Never restocked</span>
+              <span>★ 4.9 / 5 · 200+ reviews</span><span>★ 48hr dispatch</span><span>★ Easy 7-day exchange</span>
             </div>
           </div>
           <div className="relative order-1 md:order-2">
             <div className="absolute -inset-3 bg-blood/20 blur-3xl pointer-events-none" />
             <div className="relative aspect-[2/3] bg-ink border border-border overflow-hidden">
-              <img src={heroAsset.url} alt="Audace Drop 01" className="w-full h-full object-cover" fetchPriority="high" />
+              <img src={heroAsset.url} alt="Audace Drop 02" className="w-full h-full object-cover" fetchPriority="high" />
+              <div className="absolute bottom-4 left-4 right-4 bg-background/80 backdrop-blur-md border border-border px-4 py-2 font-mono text-[10px] uppercase tracking-widest flex items-center justify-between">
+                <span className="flex items-center gap-2"><span className="h-1.5 w-1.5 bg-blood rounded-full animate-pulse" />Live now</span>
+                <span className="text-blood">130 / 200 claimed</span>
+              </div>
             </div>
           </div>
         </div>
@@ -73,11 +76,12 @@ function Index() {
       <section id="drop" className="mx-auto max-w-7xl px-5 md:px-8 py-16 md:py-24">
         <div className="flex items-end justify-between mb-10 border-b border-border pb-4">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-blood mb-2">// The drop</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-blood mb-2">// Live drop · Almost gone</p>
             <h2 className="font-display text-4xl md:text-5xl uppercase tracking-tight">Drop 02</h2>
           </div>
-          <p className="hidden md:block font-mono text-[10px] uppercase text-muted-foreground">Limited · No restocks</p>
+          <p className="hidden md:block font-mono text-[10px] uppercase text-muted-foreground">Selling fast · No restocks</p>
         </div>
+
 
         {isLoading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
