@@ -2,6 +2,7 @@
 // Anything not listed defaults to Drop 01.
 export const DROP_ASSIGNMENTS: Record<string, number> = {
   "showed-up-late-tee": 2,
+  "work-in-progress-oversized-tee": 2,
 };
 
 export const DEFAULT_DROP = 1;
