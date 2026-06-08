@@ -131,12 +131,9 @@ function ProductPage() {
       document.getElementById("size-picker")?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
+    // Note: do NOT fire InitiateCheckout here — the /checkout route fires
+    // it on mount. Firing in both places duplicates the event in Meta.
     setSizeError(false);
-    trackPixel("InitiateCheckout", {
-      content_ids: [selected.node.id],
-      value: price,
-      currency: selected.node.price.currencyCode,
-    });
     await addItem({
       product,
       variantId: selected.node.id,
