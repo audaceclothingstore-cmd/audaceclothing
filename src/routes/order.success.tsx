@@ -22,22 +22,36 @@ function SuccessPage() {
   const { order, txnid } = Route.useSearch();
   const clearCart = useCartStore((s) => s.clearCart);
   const items = useCartStore((s) => s.items);
-  const total = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
+  // Snapshot cart BEFORE clearing so Purchase keeps real values even
+  // across StrictMode re-runs or refreshes.
+  const snapshotRef = useRef<typeof items | null>(null);
+  if (snapshotRef.current === null && items.length > 0) {
+    snapshotRef.current = items;
+  }
+  const snap = snapshotRef.current ?? [];
+  const total = snap.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
   const trackedRef = useRef(false);
 
   useEffect(() => {
-    if (!trackedRef.current && items.length > 0) {
-      trackedRef.current = true;
-      trackPixel("Purchase", {
-        content_ids: items.map((i) => i.variantId),
+    if (trackedRef.current) return;
+    if (snap.length === 0) return;
+    trackedRef.current = true;
+    trackPixel(
+      "Purchase",
+      {
+        content_ids: snap.map((i) => i.variantId),
         content_type: "product",
         value: total,
-        currency: items[0]?.price.currencyCode || "INR",
-        num_items: items.reduce((s, i) => s + i.quantity, 0),
-      });
-    }
+        currency: snap[0]?.price.currencyCode || "INR",
+        num_items: snap.reduce((s, i) => s + i.quantity, 0),
+        order_id: order || txnid || undefined,
+      },
+      // Use order id as eventID so Meta dedupes refreshes of this page.
+      { eventID: order || txnid || `purchase-${Date.now().toString(36)}` }
+    );
     clearCart();
-  }, [clearCart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [snap.length]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
