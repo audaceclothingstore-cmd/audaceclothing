@@ -113,10 +113,13 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function MetaPixelTracker() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const lastTracked = useRef<string | null>(null);
   useEffect(() => {
-    if (typeof window !== "undefined" && window.fbq) {
-      window.fbq("track", "PageView");
-    }
+    if (typeof window === "undefined" || !window.fbq) return;
+    // Guard against React StrictMode double-invoke + path churn during hydration.
+    if (lastTracked.current === pathname) return;
+    lastTracked.current = pathname;
+    window.fbq("track", "PageView", {}, { eventID: `pv-${pathname}-${Date.now().toString(36)}` });
   }, [pathname]);
   return null;
 }
