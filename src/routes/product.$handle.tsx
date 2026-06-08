@@ -47,18 +47,21 @@ function ProductPage() {
   const isLoadingCart = useCartStore((s) => s.isLoading);
   const openCart = useCartStore((s) => s.openCart);
 
+  // Fire ViewContent once per product (not on size change). Uses the
+  // current/first variant for price+id so Meta still gets value+currency.
   useEffect(() => {
-    if (product && selected) {
-      trackPixel("ViewContent", {
-        content_ids: [selected.node.id],
-        content_name: product.node.title,
-        content_type: "product",
-        value: parseFloat(selected.node.price.amount),
-        currency: selected.node.price.currencyCode,
-      });
-    }
+    if (!product) return;
+    const first = product.node.variants.edges[0]?.node;
+    if (!first) return;
+    trackPixel("ViewContent", {
+      content_ids: [first.id],
+      content_name: product.node.title,
+      content_type: "product",
+      value: parseFloat(first.price.amount),
+      currency: first.price.currencyCode,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product?.node.id, selected?.node.id]);
+  }, [product?.node.id]);
 
   if (isLoading) {
     return (
