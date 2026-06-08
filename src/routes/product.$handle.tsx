@@ -299,7 +299,7 @@ function ProductPage() {
             {/* Payment methods row — concrete logos build more trust than generic badges */}
             <div className="flex flex-wrap items-center gap-2 border-y border-border py-3">
               <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mr-2">Pay with</span>
-              {["UPI", "Visa", "Mastercard", "RuPay", "Net banking", "COD"].map((m) => (
+              {["UPI", "Visa", "RuPay", "Net banking"].map((m) => (
                 <span key={m} className="font-mono text-[10px] uppercase tracking-widest border border-border px-2 py-1">
                   {m}
                 </span>
@@ -330,7 +330,7 @@ function ProductPage() {
                   <ul className="font-mono text-xs text-muted-foreground space-y-1">
                     <li>· Dispatch within 24 hrs · delivery 48–72 hrs across India</li>
                     <li>· Free shipping over ₹1499</li>
-                    <li>· COD available alongside UPI, cards, net banking</li>
+                    <li>· UPI, cards, net banking accepted at checkout</li>
                     <li>· 7-day size exchange · defects replaced free (report within 24 hrs)</li>
                   </ul>
                 </AccordionContent>
@@ -403,7 +403,7 @@ function ProductPage() {
                 <span className="font-mono text-[10px] line-through text-muted-foreground">{cur}{compare.toFixed(0)}</span>
               )}
             </div>
-            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">COD · 48hr · 7-day exchange</p>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">48hr · 7-day exchange</p>
           </div>
           <button
             onClick={handleAdd}

@@ -66,7 +66,7 @@ function Index() {
               </a>
             </div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              <span>★ 4.9 / 5</span><span>· COD available</span><span>· 48hr dispatch</span><span>· 7-day exchange</span>
+              <span>★ 4.9 / 5</span><span>· 48hr dispatch</span><span>· 7-day exchange</span>
             </div>
           </div>
           <div className="relative order-1 md:order-2">
@@ -169,12 +169,6 @@ function Index() {
               Orders dispatch within 24 hours. Delivery is 48–72 hours across India. Free shipping on orders over ₹1499.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="cod">
-            <AccordionTrigger className="font-display text-xl uppercase tracking-tight text-left">Is COD available?</AccordionTrigger>
-            <AccordionContent className="font-body text-muted-foreground">
-              Yes — cash on delivery is available across India alongside UPI, cards, and net banking at checkout.
-            </AccordionContent>
-          </AccordionItem>
           <AccordionItem value="exchange">
             <AccordionTrigger className="font-display text-xl uppercase tracking-tight text-left">What if it doesn't fit?</AccordionTrigger>
             <AccordionContent className="font-body text-muted-foreground">
@@ -200,7 +194,7 @@ function Index() {
           <a href="#drop" className="inline-flex items-center gap-3 bg-foreground text-blood px-7 py-4 md:px-8 md:py-5 font-display text-xl md:text-2xl uppercase tracking-wide hover:bg-foreground/90">
             Claim your number →
           </a>
-          <p className="font-mono text-[10px] uppercase tracking-widest text-foreground/80">COD · UPI · Cards · 7-day exchange</p>
+          <p className="font-mono text-[10px] uppercase tracking-widest text-foreground/80">UPI · Cards · 7-day exchange</p>
         </div>
       </section>
 
