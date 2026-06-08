@@ -64,6 +64,12 @@ function CheckoutPage() {
     country: "India",
   });
 
+  const total = items.reduce(
+    (s, i) => s + parseFloat(i.price.amount) * i.quantity,
+    0
+  );
+  const currencyCode = items[0]?.price.currencyCode || "INR";
+
   useEffect(() => {
     if (items.length === 0) navigate({ to: "/" });
   }, [items.length, navigate]);
@@ -72,24 +78,22 @@ function CheckoutPage() {
     void loadRazorpay();
   }, []);
 
+  // Fire InitiateCheckout exactly once per checkout session.
+  const icFiredRef = useRef(false);
   useEffect(() => {
-    if (items.length > 0) {
-      trackPixel("InitiateCheckout", {
-        content_ids: items.map((i) => i.variantId),
-        content_type: "product",
-        value: total,
-        currency: currencyCode,
-        num_items: items.reduce((s, i) => s + i.quantity, 0),
-      });
-    }
+    if (icFiredRef.current) return;
+    if (items.length === 0) return;
+    icFiredRef.current = true;
+    trackPixel("InitiateCheckout", {
+      content_ids: items.map((i) => i.variantId),
+      content_type: "product",
+      value: total,
+      currency: currencyCode,
+      num_items: items.reduce((s, i) => s + i.quantity, 0),
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [items.length]);
 
-  const total = items.reduce(
-    (s, i) => s + parseFloat(i.price.amount) * i.quantity,
-    0
-  );
-  const currencyCode = items[0]?.price.currencyCode || "INR";
 
   const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
