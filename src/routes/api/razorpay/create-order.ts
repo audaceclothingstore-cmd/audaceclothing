@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { setCookie } from "@tanstack/react-start/server";
 import { createRazorpayOrder, generateReceipt, getPublicKeyId } from "@/lib/razorpay";
 import type { PendingOrder } from "@/lib/shopify-admin";
+import { verifyAndRepriceOrder } from "@/lib/verify-prices.server";
 
 export const Route = createFileRoute("/api/razorpay/create-order")({
   server: {
@@ -19,14 +20,26 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
         }
 
 
-        let body: PendingOrder;
+        let raw: PendingOrder;
         try {
-          body = (await request.json()) as PendingOrder;
+          raw = (await request.json()) as PendingOrder;
         } catch {
           return Response.json({ error: "Invalid JSON" }, { status: 400 });
         }
-        if (!body?.items?.length || !body?.customer?.email) {
+        if (!raw?.items?.length || !raw?.customer?.email) {
           return Response.json({ error: "Missing items or customer" }, { status: 400 });
+        }
+
+        // SECURITY: never trust client-supplied prices. Re-fetch from Shopify.
+        let body: PendingOrder;
+        try {
+          body = await verifyAndRepriceOrder(raw);
+        } catch (e) {
+          console.error("[razorpay] price verification failed", e);
+          return Response.json(
+            { error: e instanceof Error ? e.message : "Price verification failed" },
+            { status: 400 }
+          );
         }
 
         const rupees = body.items.reduce(
