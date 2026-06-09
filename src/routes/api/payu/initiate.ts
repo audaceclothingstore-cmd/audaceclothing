@@ -9,6 +9,7 @@ import {
   type PayURequestFields,
 } from "@/lib/payu";
 import type { PendingOrder } from "@/lib/shopify-admin";
+import { verifyAndRepriceOrder } from "@/lib/verify-prices.server";
 
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) =>
@@ -26,14 +27,26 @@ export const Route = createFileRoute("/api/payu/initiate")({
           return new Response("PayU not configured", { status: 500 });
         }
 
-        let body: PendingOrder;
+        let raw: PendingOrder;
         try {
-          body = (await request.json()) as PendingOrder;
+          raw = (await request.json()) as PendingOrder;
         } catch {
           return new Response("Invalid JSON", { status: 400 });
         }
-        if (!body?.items?.length || !body?.customer?.email) {
+        if (!raw?.items?.length || !raw?.customer?.email) {
           return new Response("Missing items or customer", { status: 400 });
+        }
+
+        // SECURITY: never trust client-supplied prices. Re-fetch from Shopify.
+        let body: PendingOrder;
+        try {
+          body = await verifyAndRepriceOrder(raw);
+        } catch (e) {
+          console.error("[payu] price verification failed", e);
+          return new Response(
+            e instanceof Error ? e.message : "Price verification failed",
+            { status: 400 }
+          );
         }
 
         const amount = formatPayUAmount(
