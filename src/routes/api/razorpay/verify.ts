@@ -148,9 +148,28 @@ export const Route = createFileRoute("/api/razorpay/verify")({
         }
 
         try {
-          const amountRupees = pending.items
-            .reduce((s, i) => s + Number(i.price) * i.quantity, 0)
-            .toFixed(2);
+          const expectedPaise = Math.round(
+            pending.items.reduce((s, i) => s + Number(i.price) * i.quantity, 0) * 100
+          );
+          // SECURITY: confirm Razorpay actually captured the expected amount,
+          // protecting against any tampering between order creation and capture.
+          const payment = await fetchRazorpayPayment(paymentId);
+          if (!payment || payment.order_id !== orderId) {
+            throw new Error("Payment/order mismatch on amount check");
+          }
+          if (payment.amount !== expectedPaise) {
+            console.error("[razorpay] AMOUNT MISMATCH — refusing to create order", {
+              orderId,
+              paymentId,
+              expectedPaise,
+              capturedAmount: payment.amount,
+            });
+            return Response.json(
+              { error: "Payment amount mismatch", verified: false },
+              { status: 400 }
+            );
+          }
+          const amountRupees = (expectedPaise / 100).toFixed(2);
           const order = await createShopifyOrder(pending, {
             txnid: orderId,
             mihpayid: paymentId,
