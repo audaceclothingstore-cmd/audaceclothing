@@ -195,7 +195,31 @@ function CheckoutPage() {
             });
             const result = await v.json().catch(() => ({}));
             if (v.ok && (result.success || result.verified)) {
-              clearCart();
+              // Snapshot purchase BEFORE clearing cart so success page can
+              // fire Meta Purchase with real value/items even after refresh.
+              try {
+                const snapshot = {
+                  items: items.map((i) => ({
+                    variantId: i.variantId,
+                    title: i.product.node.title,
+                    quantity: i.quantity,
+                    price: i.price.amount,
+                    currencyCode: i.price.currencyCode,
+                  })),
+                  total,
+                  currency: currencyCode,
+                  numItems,
+                  orderId: result.order_id || response.razorpay_order_id,
+                  orderName: result.order_name || "",
+                  ts: Date.now(),
+                };
+                sessionStorage.setItem(
+                  "audace_purchase_snapshot",
+                  JSON.stringify(snapshot)
+                );
+              } catch (e) {
+                console.warn("[checkout] could not write purchase snapshot", e);
+              }
               if (result.warning) toast.message(result.warning);
               navigate({
                 to: "/order/success",
