@@ -54,7 +54,7 @@ function loadRazorpay(): Promise<boolean> {
 function CheckoutPage() {
   const navigate = useNavigate();
   const items = useCartStore((s) => s.items);
-  const clearCart = useCartStore((s) => s.clearCart);
+  // cart is cleared on /order/success after Purchase event fires
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     firstName: "",
