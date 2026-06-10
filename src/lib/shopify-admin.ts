@@ -86,6 +86,7 @@ export async function createShopifyOrder(
         province: pending.customer.province,
         zip: pending.customer.zip,
         country: pending.customer.country,
+        country_code: pending.customer.country?.toUpperCase() === "INDIA" ? "IN" : undefined,
         phone: pending.customer.phone,
       },
       shipping_address: {
@@ -97,6 +98,7 @@ export async function createShopifyOrder(
         province: pending.customer.province,
         zip: pending.customer.zip,
         country: pending.customer.country,
+        country_code: pending.customer.country?.toUpperCase() === "INDIA" ? "IN" : undefined,
         phone: pending.customer.phone,
       },
       financial_status: "paid",
@@ -113,11 +115,10 @@ export async function createShopifyOrder(
       ],
       note: `${payment.mode} txn: ${payment.txnid} | payment_id: ${payment.mihpayid}`,
       tags: `${payment.mode}, custom-storefront`,
-      send_receipt: true,
-      send_fulfillment_receipt: false,
       inventory_behaviour: "decrement_obeying_policy",
     },
   };
+
 
   const res = await fetch(url, {
     method: "POST",
