@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCartStore } from "@/stores/cartStore";
 import { trackPixel } from "@/lib/metaPixel";
 import { CheckCircle2, Package, Truck, ShieldCheck } from "lucide-react";
@@ -25,41 +25,96 @@ declare global {
   }
 }
 
+const SNAP_KEY = "audace_purchase_snapshot";
+
+interface SnapshotItem {
+  variantId: string;
+  title: string;
+  quantity: number;
+  price: string;
+  currencyCode: string;
+}
+
+interface PurchaseSnapshot {
+  items: SnapshotItem[];
+  total: number;
+  currency: string;
+  numItems: number;
+  orderId: string;
+  orderName: string;
+  ts: number;
+}
+
+function readSnapshot(): PurchaseSnapshot | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(SNAP_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as PurchaseSnapshot;
+  } catch {
+    return null;
+  }
+}
+
 function SuccessPage() {
   const { order, txnid } = Route.useSearch();
   const clearCart = useCartStore((s) => s.clearCart);
-  const items = useCartStore((s) => s.items);
+  const liveItems = useCartStore((s) => s.items);
 
-  // Snapshot cart BEFORE clearing so Purchase keeps real values even across
-  // StrictMode re-runs, refreshes or hydration.
-  const snapshotRef = useRef<typeof items | null>(null);
-  if (snapshotRef.current === null && items.length > 0) {
-    snapshotRef.current = items;
-  }
-  const snap = snapshotRef.current ?? [];
-  const total = snap.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
-  const currency = snap[0]?.price.currencyCode || "INR";
-  const numItems = snap.reduce((s, i) => s + i.quantity, 0);
+  // Read sessionStorage snapshot once on mount. Falls back to live cart if
+  // present (defensive — older flows may still have items here).
+  const [snapshot] = useState<PurchaseSnapshot | null>(() => {
+    const snap = readSnapshot();
+    if (snap) return snap;
+    if (liveItems.length > 0) {
+      return {
+        items: liveItems.map((i) => ({
+          variantId: i.variantId,
+          title: i.product.node.title,
+          quantity: i.quantity,
+          price: i.price.amount,
+          currencyCode: i.price.currencyCode,
+        })),
+        total: liveItems.reduce(
+          (s, i) => s + parseFloat(i.price.amount) * i.quantity,
+          0
+        ),
+        currency: liveItems[0]?.price.currencyCode || "INR",
+        numItems: liveItems.reduce((s, i) => s + i.quantity, 0),
+        orderId: txnid || "",
+        orderName: order || "",
+        ts: Date.now(),
+      };
+    }
+    return null;
+  });
+
   const trackedRef = useRef(false);
 
-  // Stable dedupe id — Shopify order name wins, then txnid.
-  const dedupeId = order || txnid || "";
+  // Stable dedupe id — Shopify order name wins, then snapshot orderName, then txnid.
+  const dedupeId = order || snapshot?.orderName || txnid || snapshot?.orderId || "";
 
   useEffect(() => {
     if (trackedRef.current) return;
-    // Don't fire Purchase if we have nothing real to attribute (deep-link refresh
-    // after cart-clear in a new tab). Meta would otherwise see a 0-value event.
-    if (snap.length === 0) return;
+    if (!snapshot || snapshot.items.length === 0) {
+      // Nothing real to attribute (deep-link refresh in a new tab). Don't fire 0-value.
+      return;
+    }
     trackedRef.current = true;
 
     trackPixel(
       "Purchase",
       {
-        content_ids: snap.map((i) => i.variantId),
+        content_ids: snapshot.items.map((i) => i.variantId),
         content_type: "product",
-        value: total,
-        currency,
-        num_items: numItems,
+        contents: snapshot.items.map((i) => ({
+          id: i.variantId,
+          quantity: i.quantity,
+          item_price: parseFloat(i.price),
+        })),
+        value: snapshot.total,
+        currency: snapshot.currency,
+        num_items: snapshot.numItems,
         order_id: dedupeId || undefined,
       },
       { eventID: dedupeId || `purchase-${Date.now().toString(36)}` }
@@ -71,22 +126,28 @@ function SuccessPage() {
       window.dataLayer.push({
         event: "purchase",
         transaction_id: dedupeId || undefined,
-        value: total,
-        currency,
-        items: snap.map((i) => ({
+        value: snapshot.total,
+        currency: snapshot.currency,
+        items: snapshot.items.map((i) => ({
           item_id: i.variantId,
-          item_name: i.product.node.title,
+          item_name: i.title,
           quantity: i.quantity,
-          price: parseFloat(i.price.amount),
+          price: parseFloat(i.price),
         })),
       });
     }
 
+    // Tracking is done — safe to clear cart & snapshot now.
+    try {
+      sessionStorage.removeItem(SNAP_KEY);
+    } catch {
+      /* ignore */
+    }
     clearCart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [snap.length]);
+  }, []);
 
-  const hasContext = snap.length > 0 || !!order;
+  const hasContext = (snapshot?.items.length ?? 0) > 0 || !!order;
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-10">
@@ -116,23 +177,24 @@ function SuccessPage() {
               </div>
             )}
 
-            {snap.length > 0 && (
+            {snapshot && snapshot.items.length > 0 && (
               <div className="mt-6 space-y-2">
-                {snap.map((i) => (
+                {snapshot.items.map((i) => (
                   <div
                     key={i.variantId}
                     className="flex justify-between gap-3 font-mono text-xs"
                   >
                     <span className="truncate">
-                      {i.product.node.title} ·{" "}
-                      {i.selectedOptions.map((o) => o.value).join("/")} × {i.quantity}
+                      {i.title} × {i.quantity}
                     </span>
-                    <span>₹{(parseFloat(i.price.amount) * i.quantity).toFixed(0)}</span>
+                    <span>₹{(parseFloat(i.price) * i.quantity).toFixed(0)}</span>
                   </div>
                 ))}
                 <div className="border-t border-border pt-2 flex justify-between items-baseline">
                   <span className="font-mono text-xs uppercase">Total paid</span>
-                  <span className="font-display text-xl">₹{total.toFixed(0)}</span>
+                  <span className="font-display text-xl">
+                    ₹{snapshot.total.toFixed(0)}
+                  </span>
                 </div>
               </div>
             )}

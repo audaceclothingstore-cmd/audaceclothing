@@ -187,10 +187,11 @@ export const Route = createFileRoute("/api/razorpay/verify")({
           });
         } catch (e) {
           // FULL reconciliation log — payment IS captured, Shopify failed.
+          const errMsg = e instanceof Error ? e.message : String(e);
           console.error("[razorpay] RECONCILE-MANUALLY Shopify order creation FAILED after captured payment", {
             razorpay_order_id: orderId,
             razorpay_payment_id: paymentId,
-            error: e instanceof Error ? e.message : String(e),
+            error: errMsg,
             customer: {
               email: pending.customer.email,
               phone: pending.customer.phone,
@@ -216,6 +217,7 @@ export const Route = createFileRoute("/api/razorpay/verify")({
             success: true,
             verified: true,
             shopify_order_created: false,
+            shopify_error: errMsg,
             order_name: "",
             order_id: orderId,
             payment_id: paymentId,

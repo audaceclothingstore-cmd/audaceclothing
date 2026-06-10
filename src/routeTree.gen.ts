@@ -19,6 +19,7 @@ import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/ver
 import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
 import { Route as ApiPayuInitiateRouteImport } from './routes/api/payu/initiate'
 import { Route as ApiPayuCallbackRouteImport } from './routes/api/payu/callback'
+import { Route as ApiPublicDebugShopifyPingRouteImport } from './routes/api/public/debug/shopify-ping'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -70,6 +71,12 @@ const ApiPayuCallbackRoute = ApiPayuCallbackRouteImport.update({
   path: '/api/payu/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDebugShopifyPingRoute =
+  ApiPublicDebugShopifyPingRouteImport.update({
+    id: '/api/public/debug/shopify-ping',
+    path: '/api/public/debug/shopify-ping',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/api/payu/initiate': typeof ApiPayuInitiateRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
+  '/api/public/debug/shopify-ping': typeof ApiPublicDebugShopifyPingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,6 +102,7 @@ export interface FileRoutesByTo {
   '/api/payu/initiate': typeof ApiPayuInitiateRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
+  '/api/public/debug/shopify-ping': typeof ApiPublicDebugShopifyPingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +116,7 @@ export interface FileRoutesById {
   '/api/payu/initiate': typeof ApiPayuInitiateRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
+  '/api/public/debug/shopify-ping': typeof ApiPublicDebugShopifyPingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/api/payu/initiate'
     | '/api/razorpay/create-order'
     | '/api/razorpay/verify'
+    | '/api/public/debug/shopify-ping'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/api/payu/initiate'
     | '/api/razorpay/create-order'
     | '/api/razorpay/verify'
+    | '/api/public/debug/shopify-ping'
   id:
     | '__root__'
     | '/'
@@ -145,6 +157,7 @@ export interface FileRouteTypes {
     | '/api/payu/initiate'
     | '/api/razorpay/create-order'
     | '/api/razorpay/verify'
+    | '/api/public/debug/shopify-ping'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,6 +171,7 @@ export interface RootRouteChildren {
   ApiPayuInitiateRoute: typeof ApiPayuInitiateRoute
   ApiRazorpayCreateOrderRoute: typeof ApiRazorpayCreateOrderRoute
   ApiRazorpayVerifyRoute: typeof ApiRazorpayVerifyRoute
+  ApiPublicDebugShopifyPingRoute: typeof ApiPublicDebugShopifyPingRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -232,6 +246,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPayuCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/debug/shopify-ping': {
+      id: '/api/public/debug/shopify-ping'
+      path: '/api/public/debug/shopify-ping'
+      fullPath: '/api/public/debug/shopify-ping'
+      preLoaderRoute: typeof ApiPublicDebugShopifyPingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -246,6 +267,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPayuInitiateRoute: ApiPayuInitiateRoute,
   ApiRazorpayCreateOrderRoute: ApiRazorpayCreateOrderRoute,
   ApiRazorpayVerifyRoute: ApiRazorpayVerifyRoute,
+  ApiPublicDebugShopifyPingRoute: ApiPublicDebugShopifyPingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
