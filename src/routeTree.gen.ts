@@ -19,7 +19,7 @@ import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/ver
 import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
 import { Route as ApiPayuInitiateRouteImport } from './routes/api/payu/initiate'
 import { Route as ApiPayuCallbackRouteImport } from './routes/api/payu/callback'
-import { Route as ApiDebugShopifyPingRouteImport } from './routes/api/debug/shopify-ping'
+import { Route as ApiPublicDebugShopifyPingRouteImport } from './routes/api/public/debug/shopify-ping'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -71,11 +71,12 @@ const ApiPayuCallbackRoute = ApiPayuCallbackRouteImport.update({
   path: '/api/payu/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDebugShopifyPingRoute = ApiDebugShopifyPingRouteImport.update({
-  id: '/api/debug/shopify-ping',
-  path: '/api/debug/shopify-ping',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const ApiPublicDebugShopifyPingRoute =
+  ApiPublicDebugShopifyPingRouteImport.update({
+    id: '/api/public/debug/shopify-ping',
+    path: '/api/public/debug/shopify-ping',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -84,11 +85,11 @@ export interface FileRoutesByFullPath {
   '/order/failure': typeof OrderFailureRoute
   '/order/success': typeof OrderSuccessRoute
   '/product/$handle': typeof ProductHandleRoute
-  '/api/debug/shopify-ping': typeof ApiDebugShopifyPingRoute
   '/api/payu/callback': typeof ApiPayuCallbackRoute
   '/api/payu/initiate': typeof ApiPayuInitiateRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
+  '/api/public/debug/shopify-ping': typeof ApiPublicDebugShopifyPingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -97,11 +98,11 @@ export interface FileRoutesByTo {
   '/order/failure': typeof OrderFailureRoute
   '/order/success': typeof OrderSuccessRoute
   '/product/$handle': typeof ProductHandleRoute
-  '/api/debug/shopify-ping': typeof ApiDebugShopifyPingRoute
   '/api/payu/callback': typeof ApiPayuCallbackRoute
   '/api/payu/initiate': typeof ApiPayuInitiateRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
+  '/api/public/debug/shopify-ping': typeof ApiPublicDebugShopifyPingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -111,11 +112,11 @@ export interface FileRoutesById {
   '/order/failure': typeof OrderFailureRoute
   '/order/success': typeof OrderSuccessRoute
   '/product/$handle': typeof ProductHandleRoute
-  '/api/debug/shopify-ping': typeof ApiDebugShopifyPingRoute
   '/api/payu/callback': typeof ApiPayuCallbackRoute
   '/api/payu/initiate': typeof ApiPayuInitiateRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
+  '/api/public/debug/shopify-ping': typeof ApiPublicDebugShopifyPingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -126,11 +127,11 @@ export interface FileRouteTypes {
     | '/order/failure'
     | '/order/success'
     | '/product/$handle'
-    | '/api/debug/shopify-ping'
     | '/api/payu/callback'
     | '/api/payu/initiate'
     | '/api/razorpay/create-order'
     | '/api/razorpay/verify'
+    | '/api/public/debug/shopify-ping'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -139,11 +140,11 @@ export interface FileRouteTypes {
     | '/order/failure'
     | '/order/success'
     | '/product/$handle'
-    | '/api/debug/shopify-ping'
     | '/api/payu/callback'
     | '/api/payu/initiate'
     | '/api/razorpay/create-order'
     | '/api/razorpay/verify'
+    | '/api/public/debug/shopify-ping'
   id:
     | '__root__'
     | '/'
@@ -152,11 +153,11 @@ export interface FileRouteTypes {
     | '/order/failure'
     | '/order/success'
     | '/product/$handle'
-    | '/api/debug/shopify-ping'
     | '/api/payu/callback'
     | '/api/payu/initiate'
     | '/api/razorpay/create-order'
     | '/api/razorpay/verify'
+    | '/api/public/debug/shopify-ping'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -166,11 +167,11 @@ export interface RootRouteChildren {
   OrderFailureRoute: typeof OrderFailureRoute
   OrderSuccessRoute: typeof OrderSuccessRoute
   ProductHandleRoute: typeof ProductHandleRoute
-  ApiDebugShopifyPingRoute: typeof ApiDebugShopifyPingRoute
   ApiPayuCallbackRoute: typeof ApiPayuCallbackRoute
   ApiPayuInitiateRoute: typeof ApiPayuInitiateRoute
   ApiRazorpayCreateOrderRoute: typeof ApiRazorpayCreateOrderRoute
   ApiRazorpayVerifyRoute: typeof ApiRazorpayVerifyRoute
+  ApiPublicDebugShopifyPingRoute: typeof ApiPublicDebugShopifyPingRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -245,11 +246,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPayuCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/debug/shopify-ping': {
-      id: '/api/debug/shopify-ping'
-      path: '/api/debug/shopify-ping'
-      fullPath: '/api/debug/shopify-ping'
-      preLoaderRoute: typeof ApiDebugShopifyPingRouteImport
+    '/api/public/debug/shopify-ping': {
+      id: '/api/public/debug/shopify-ping'
+      path: '/api/public/debug/shopify-ping'
+      fullPath: '/api/public/debug/shopify-ping'
+      preLoaderRoute: typeof ApiPublicDebugShopifyPingRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -262,12 +263,22 @@ const rootRouteChildren: RootRouteChildren = {
   OrderFailureRoute: OrderFailureRoute,
   OrderSuccessRoute: OrderSuccessRoute,
   ProductHandleRoute: ProductHandleRoute,
-  ApiDebugShopifyPingRoute: ApiDebugShopifyPingRoute,
   ApiPayuCallbackRoute: ApiPayuCallbackRoute,
   ApiPayuInitiateRoute: ApiPayuInitiateRoute,
   ApiRazorpayCreateOrderRoute: ApiRazorpayCreateOrderRoute,
   ApiRazorpayVerifyRoute: ApiRazorpayVerifyRoute,
+  ApiPublicDebugShopifyPingRoute: ApiPublicDebugShopifyPingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

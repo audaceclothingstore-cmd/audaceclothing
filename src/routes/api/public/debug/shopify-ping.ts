@@ -9,7 +9,7 @@ function getStoreDomain(): string {
 
 // Diagnostic endpoint — confirms the SHOPIFY_ADMIN_ACCESS_TOKEN is valid,
 // which shop it points to, and which scopes it holds. Read-only.
-export const Route = createFileRoute("/api/debug/shopify-ping")({
+export const Route = createFileRoute("/api/public/debug/shopify-ping")({
   server: {
     handlers: {
       GET: async () => {
